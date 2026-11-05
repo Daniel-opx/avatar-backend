@@ -1,35 +1,31 @@
-require("dotenv").config();
+require('dotenv').config({ quiet: true });
+const { validateEnvironment } = require('./config');
 
-const express = require("express");
-const jobsRouter = require("./routes/jobs");
-
-const app = express();
-const PORT = process.env.PORT || 3000;
-
-if (process.env.NODE_ENV === "production" && !process.env.API_KEY) {
-  console.error("API_KEY must be configured in production.");
-  process.exit(1);
-}
-
-app.use(express.json());
-
-app.get("/health", (req, res) => {
-  res.json({ status: "ok", message: "Avatar backend is running" });
-});
-
-// Jobs endpoints: POST /jobs and GET /jobs
-app.use("/jobs", (req, res, next) => {
-  // Local development can be used without a key; production requires one.
-  const expected = process.env.API_KEY;
-  if (!expected && process.env.NODE_ENV !== "production") return next();
-  if (req.get("x-api-key") !== expected) {
-    return res.status(401).json({ error: "Unauthorized" });
+function start() {
+  const { port } = validateEnvironment();
+  const pool = require('./db/pool');
+  const { createApp } = require('./app');
+  const server = createApp({ pool }).listen(port, '0.0.0.0', () => {
+    console.log(JSON.stringify({ event: 'server_started', port }));
+  });
+  server.requestTimeout = 30000;
+  server.headersTimeout = 15000;
+  let stopping = false;
+  function shutdown() {
+    if (stopping) return;
+    stopping = true;
+    const deadline = setTimeout(() => process.exit(1), 25000);
+    deadline.unref();
+    server.close(async () => {
+      try { await pool.end(); clearTimeout(deadline); }
+      catch { process.exitCode = 1; }
+    });
   }
-  next();
-}, jobsRouter);
-
-app.use((req, res) => res.status(404).json({ error: "Route not found" }));
-
-app.listen(PORT, "0.0.0.0", () => {
-  console.log(`Avatar backend listening on port ${PORT}`);
-});
+  process.once('SIGTERM', shutdown);
+  process.once('SIGINT', shutdown);
+  return server;
+}
+if (require.main === module) {
+  try { start(); } catch (error) { console.error(error.message); process.exitCode = 1; }
+}
+module.exports = { start };

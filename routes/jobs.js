@@ -1,21 +1,34 @@
-const express = require('express');
+const express = require("express");
+const pool = require("../db/pool");
 const router = express.Router();
-const pool = require('../db/pool');
 
-router.post('/', async (req, res) => {
+router.post("/", async (req, res) => {
+  const topic = req.body?.topic;
+  if (typeof topic !== "string" || !topic.trim() || topic.length > 500) {
+    return res.status(400).json({ error: "topic must be a nonempty string up to 500 characters" });
+  }
+
   try {
-    const { topic } = req.body || {};
-    if (typeof topic !== 'string' || !topic.trim()) {
-      return res.status(400).json({ error: 'A valid topic is required' });
-    }
     const result = await pool.query(
-      'INSERT INTO jobs (topic) VALUES ($1) RETURNING *',
+      "INSERT INTO jobs (topic) VALUES ($1) RETURNING *",
       [topic.trim()]
     );
     return res.status(201).json(result.rows[0]);
   } catch (error) {
-    console.error('Failed to create job:', error);
-    return res.status(500).json({ error: 'Internal server error' });
+    console.error(JSON.stringify({ event: 'job_create_failed', code: error.code || 'UNKNOWN' }));
+    return res.status(500).json({ error: "Could not create job" });
+  }
+});
+
+router.get("/", async (req, res) => {
+  try {
+    const result = await pool.query(
+      "SELECT * FROM jobs ORDER BY created_at DESC LIMIT 100"
+    );
+    return res.json(result.rows);
+  } catch (error) {
+    console.error(JSON.stringify({ event: 'job_list_failed', code: error.code || 'UNKNOWN' }));
+    return res.status(500).json({ error: "Could not load jobs" });
   }
 });
 
