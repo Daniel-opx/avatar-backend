@@ -8,8 +8,8 @@ Original Hebrew architecture document: not found in the repository; requirements
 
 - [x] Steps 1–11: existing backend and recurring scheduler; earlier live integration passed.
 - [x] Step 12: scheduler reliability/recovery — isolated PostgreSQL tests executed successfully.
-- [ ] Step 13: deployed on Free, settings aligned, rebuild/restart and limiter verified; credential rotation and idle cold-start check pending.
-- [ ] Step 14: GitHub-hosted health and authenticated disabled-scheduler tests passed; one-off cold-start verification pending. No recurring execution.
+- [x] Step 13: Free deployment, settings, authentication, restart and controlled post-idle recovery verified; infrastructure limitations documented.
+- [x] Step 14: GitHub-hosted health, scoped authentication and repeated post-idle triggers verified; recurring template prepared but intentionally inactive.
 - [ ] Step 15: durable processing/lifecycle, attempts, leases, retries and cancellation.
 - [ ] Step 16: provider abstraction and versioned structured Hebrew LLM content.
 - [ ] Step 17: protected creative assets and optional voice generation.
@@ -41,7 +41,8 @@ Rollback failure discards the client; error logs omit raw driver messages.
 
 Run executed before Step 13 TLS change: 19 passing test records (18 checks plus parent), zero failures.
 Connection failures and commit acknowledgement loss are injected at the driver boundary, not a
-real Supabase outage or network kill. Production restart/cold-start verification remains pending.
+real Supabase outage or network kill. Production restart and controlled post-idle recovery were
+subsequently verified as recorded below; no actual external database outage was induced.
 Migration 011 was made repeatable by replacing its named constraints inside a transaction;
 repeatability test added afterward. No new live migration was applied this turn.
 
@@ -75,7 +76,8 @@ Manual rebuild `dep-dbmn0iqjnfac73av08ag` succeeded using those commands, source
 Render's Events page confirmed a deliberate service restart at 08:16 Asia/Jerusalem.
 During the restart a readiness probe returned 502; subsequent health/readiness probes returned 200.
 Job count before/after: 4; scheduled-job count: 3; scheduling enabled: false throughout.
-This verifies restart recovery; a naturally idle Free cold-start has NOT yet been timed/verified.
+This verifies restart recovery. A later 16-minute quiescence test verified post-idle requests
+as recorded below; Render's internal spin-down flag was not independently read.
 
 Live ingress investigation: rate-limit remaining counters varied even on a single reused TLS
 connection with unchanged headers. This does not establish a header-spoofing vulnerability;
@@ -153,9 +155,10 @@ Reviewed build/runtime logs showed safe structured messages, no visible credenti
   returned 200 afterward. Subsequent owner-run authenticated `GET /jobs` returned 200.
   No key or plan changed during recovery.
 
-- Step 13 acceptance is NOT fully met: post-rotation authenticated check and natural idle cold-start
-  verification remain pending. Step 14 research is prepared in `docs/EXTERNAL_CRON.md`;
-  no provider account, remote job, credential transfer or recurring execution configured.
+- Steps 13–14 functional checks passed for the chosen Free setup. Production-grade uptime,
+  guarantees of scheduled punctuality and simulated upstream outages are not claimed.
+  GitHub Actions stores only the scheduler-scoped credential saved privately by the owner.
+  No standing recurring workflow or business scheduling was enabled. Next milestone: Step 15.
 - Step 14 local preparation: provider-independent `scripts/trigger-scheduler.js` implements
   HTTPS-only fixed destination, redirect rejection, 120-second timeouts, bounded retries and
   content/credential-safe output. Default mode is read-only health; scheduler mode expects disabled.
@@ -208,6 +211,25 @@ Reviewed build/runtime logs showed safe structured messages, no visible credenti
   New manual workflow version adds a safe POST `/jobs` empty-object scope probe requiring 401,
   before idle waiting, and a 35-minute upper bound for cold-start/retry diagnostics. It creates
   no job with the current server validator, even if the owner key was provided accidentally.
+  **Final live results (2026-11-06):**
+  - Idle test run `42177635809`, source `e613fed`, job `127759672206`: **Success**,
+    job duration 16m19s. Wait step exactly 16m00s; authenticated request returned
+    `status=disabled`, HTTP 200, attempts=1, elapsedMs=13866. This is measured post-idle recovery;
+    the provider's actual internal power/spin-down state was not independently inspected.
+  - Scope/repeat run `42179382445`, source `8f4e01e`, job `127765285608`: **Success**,
+    job duration 4s. Actual stored scheduler credential rejected POST `/jobs` empty JSON:
+    HTTP 401, attempts=1, elapsedMs=354. Following scheduler POST returned disabled,
+    HTTP 200, attempts=1, elapsedMs=727. No values or response contents were logged.
+  - Workflow concurrency queued the scope/repeat test behind the idle test; it did not disturb
+    the idle wait. No automatic event was added; future recurring template is outside workflows.
+  - Final direct database comparison: 4 jobs / 3 scheduled jobs, scheduling_enabled=false,
+    identical to baseline. No jobs created, schema changed, or live data deleted by these tests.
+  - Final `npm test`: 21 local test records passed, 0 failed, 1 opt-in DB suite skipped.
+    Earlier real PostgreSQL integration results remain separately recorded under Step 12.
+  - No paid service/resource, account upgrade, paid API call or publishing enabled.
+  Live evidence:
+  https://github.com/Daniel-opx/avatar-backend/actions/runs/42177635809
+  https://github.com/Daniel-opx/avatar-backend/actions/runs/42179382445
 - Verified TLS works with the supplied CA; track its 2031 expiry and review provider CA changes.
 - Render Free can sleep/restart; future processing must use durable checkpoints, not detached tasks.
 - Rate limiting is per process and resets after restart; Render uses a conservative shared cap.

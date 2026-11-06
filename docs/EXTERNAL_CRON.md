@@ -14,9 +14,18 @@ Owner stored the scheduler-only secret privately in both services. GitHub authen
 Redeployment `dep-dbmnh8ijnfac73b068eg` applied it. Attempt 2 succeeded (13 seconds total),
 confirming the expected HTTP 200/disabled response through GitHub's runner.
 Evidence: https://github.com/Daniel-opx/avatar-backend/actions/runs/42176661336/attempts/2
-No recurring execution configured. Natural idle cold-start verification remains pending.
-Owner reported key rotation complete. Step 13 still has post-rotation authentication and an idle
-cold-start check outstanding. Warm public readiness/health checks passed after rotation.
+No recurring execution configured. Controlled post-idle and credential-scope verification passed:
+- Run `42177635809` (source `e613fed`): 16-minute no-request wait, then authenticated disabled
+  response HTTP 200 in 13,866 ms, one attempt; total job 16m19s. Provider internal spin-down
+  state was not independently inspected, so this is measured post-idle recovery evidence.
+- Run `42179382445` (source `8f4e01e`): limited key rejected job creation HTTP 401 (354 ms),
+  followed by another disabled scheduler HTTP 200 (727 ms), both first attempt, job 4s.
+- Workflow concurrency serialized these tests; baseline/final DB counts match: 4 jobs,
+  3 scheduled jobs, scheduling false. No new jobs or data modifications from the tests.
+- Final local regression run: 21 passed, 0 failed, 1 opt-in database suite skipped.
+Evidence:
+https://github.com/Daniel-opx/avatar-backend/actions/runs/42177635809
+https://github.com/Daniel-opx/avatar-backend/actions/runs/42179382445
 
 ## Comparison requested by owner, 2026-11-06
 
@@ -123,7 +132,7 @@ before activation. The owner has authorized no added charges.
 - A lost response is ambiguous: later retry is safe; never clear a slot or insert a manual duplicate.
 - Keep the external service separate from business recurrence; never encode daily/weekly rules there.
 
-## Acceptance still outstanding
+## Activation intentionally deferred
 
 Inactive recurring configuration is prepared at `docs/templates/scheduler-recurring.yml.example`.
 GitHub does not execute that directory or file extension. It proposes five-minute polling away
@@ -133,11 +142,13 @@ created/not_due results. CLI defaults remain health-only and expect-disabled. Mo
 this template and enabling DB scheduling both require separate owner authorization.
 No activation variable or business schedule has been enabled by this work.
 
-Use selected GitHub Actions with standard public runners and TLS verification; establish private
-secret setup; deploy scheduler-only authentication; perform a one-off test while DB scheduling
-remains disabled; verify authenticated response, duplicate
-behavior, failure reporting and cold-start retry through that provider. Leave recurring execution
-disabled even after testing. No Step 14 integration is claimed complete from these notes.
+Selected GitHub Actions is configured and manually live-verified using standard public runners,
+TLS-verified requests and a privately saved scheduler-only key. Repeated calls remained disabled,
+permission boundaries were live-tested, and the controlled post-idle test succeeded.
+The cold-start test needed no retry; actual retry paths are covered by mocks and Step 12's
+database/transaction tests, not by inducing a real provider outage. Scheduling on GitHub is
+best-effort, can be delayed/dropped, and public schedules disable after prolonged inactivity.
+Keep the recurring template and DB scheduling disabled until separate activation approval.
 
 ## Official sources
 

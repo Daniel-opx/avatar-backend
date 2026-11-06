@@ -4,9 +4,11 @@ Status: reviewed source `dc4a9eb` deployed with owner approval on the existing R
 Live at https://avatar-backend-65ep.onrender.com. Unattended automation is NOT authorized.
 HTTPS health/readiness passed; missing/old keys rejected. Owner-run fresh-key `GET /jobs`
 returned 200 on 2026-11-06. Build/start/health settings aligned; rebuild and restart recovery passed.
-Credential rotation is required after Render accessibility unexpectedly exposed the masked key.
+Owner reported private credential rotation after Render accessibility unexpectedly exposed the masked key.
 The conservative limiter correction was deployed and live-verified after old-instance draining.
-Natural idle cold-start verification and private credential rotation remain pending.
+New scheduler-scoped credential is live-verified through GitHub. A controlled 16-minute idle
+test returned disabled/200 in 13.9 seconds on the first attempt; internal platform spin-down
+state was not independently inspected. Repeated requests left job counts and disabled scheduling unchanged.
 See `PROJECT_STATUS.md` for the evidence and remaining acceptance work.
 
 ## Configuration
@@ -69,7 +71,7 @@ cap because live ingress IP buckets were unstable even on one persistent connect
 deployments use per-IP limits. This is not distributed abuse protection; unauthenticated callers
 can consume the shared budget. Health remains unthrottled. Body limit: 32 KiB.
 Graceful shutdown stops accepting traffic, drains requests and ends the pool, with a 25-second cap.
-Restart recovery passed. Natural idle cold-start behavior still requires timed verification.
+Restart and controlled post-idle recovery passed. Free instances still have best-effort availability.
 Do not assume one trusted proxy hop yields an authoritative client IP on this deployment.
 Do not use `req.ip` for authorization or security-sensitive decisions without verified ingress trust.
 
