@@ -1,0 +1,33 @@
+# DISABLED TEMPLATE. GitHub cannot execute files in docs/templates or with this extension.
+# Do not move into .github/workflows or set the activation variable without owner approval.
+name: Avatar scheduler - recurring
+
+on:
+  schedule:
+    # Poll at :02, :07, ..., :57; PostgreSQL decides whether anything is due.
+    - cron: '2-59/5 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: avatar-scheduler-recurring
+  cancel-in-progress: false
+
+jobs:
+  trigger:
+    if: github.event.repository.private == false && github.repository == 'Daniel-opx/avatar-backend' && github.ref == 'refs/heads/main' && vars.AVATAR_SCHEDULER_ENABLED == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - name: Check out reviewed source
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          persist-credentials: false
+      - name: Invoke backend scheduler
+        env:
+          SCHEDULER_MODE: scheduler
+          SCHEDULER_EXPECT_DISABLED: 'false'
+          SCHEDULER_API_KEY: ${{ secrets.AVATAR_SCHEDULER_KEY }}
+        run: node scripts/trigger-scheduler.js

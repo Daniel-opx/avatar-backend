@@ -197,6 +197,17 @@ Reviewed build/runtime logs showed safe structured messages, no visible credenti
   production `/jobs` denial using the scheduler key remains unit/HTTP-mock verified only.
   Adding manual `cold-start-disabled-scheduler` mode: 16-minute no-request idle wait then
   authenticated disabled test, total job bound 25 minutes. No schedule event is introduced.
+  One-off idle test dispatched as run `42177635809`, source `e613fed`, job `127759672206`.
+  Monitoring only GitHub's public status API; no Render requests during its idle wait.
+  Read-only Supabase baseline: 4 jobs / 3 scheduled jobs, scheduling false. Both backend tables
+  have RLS enabled and no RLS policies; no schema, grants or record contents changed/read.
+  While waiting, prepared an inactive recurring template OUTSIDE `.github/workflows` at
+  `docs/templates/scheduler-recurring.yml.example`; default-off activation variable and public
+  repository checks remain mandatory. CLI requires explicit false flag to accept active schedule
+  results; defaults health-only/expect-disabled. New client tests passed (8 of 8).
+  New manual workflow version adds a safe POST `/jobs` empty-object scope probe requiring 401,
+  before idle waiting, and a 35-minute upper bound for cold-start/retry diagnostics. It creates
+  no job with the current server validator, even if the owner key was provided accidentally.
 - Verified TLS works with the supplied CA; track its 2031 expiry and review provider CA changes.
 - Render Free can sleep/restart; future processing must use durable checkpoints, not detached tasks.
 - Rate limiting is per process and resets after restart; Render uses a conservative shared cap.

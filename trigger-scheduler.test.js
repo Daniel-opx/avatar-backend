@@ -1,8 +1,19 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
-const { trigger } = require('./scripts/trigger-scheduler');
+const { trigger, commandLineOptions } = require('./scripts/trigger-scheduler');
 const key = 'test-only-placeholder-'.repeat(2);
 const reply = (status, payload) => ({ status, async json() { return payload; }, body: { async cancel() {} } });
+
+test('CLI defaults are read-only/disabled and future activation needs an explicit flag', async () => {
+  assert.deepEqual(commandLineOptions({ API_KEY: key }), { mode: 'health', apiKey: undefined, expectDisabled: true });
+  assert.equal(commandLineOptions({ SCHEDULER_MODE: 'scheduler' }).expectDisabled, true);
+  assert.equal(commandLineOptions({ SCHEDULER_EXPECT_DISABLED: 'false' }).expectDisabled, false);
+  assert.throws(() => commandLineOptions({ SCHEDULER_EXPECT_DISABLED: 'yes' }), /true or false/);
+  const result = await trigger({ mode: 'scheduler', apiKey: key, expectDisabled: false,
+    fetchImpl: async () => reply(201, { status: 'created', job: { topic: 'private' } }) });
+  assert.equal(result.status, 'created');
+  assert.ok(!JSON.stringify(result).includes('private'));
+});
 
 test('health mode sends no secret and validates TLS through the normal HTTPS client', async () => {
   const result = await trigger({ apiKey: key, fetchImpl: async (url, options) => {
@@ -24,6 +35,20 @@ test('scheduler request uses private header and excludes response contents', asy
   } });
   assert.equal(result.status, 'disabled');
   assert.ok(!JSON.stringify(result).includes('private business data'));
+});
+
+test('scope check sends an invalid empty job request and requires permission denial', async () => {
+  const result = await trigger({ mode: 'scope', apiKey: key, fetchImpl: async (url, options) => {
+    assert.equal(url, 'https://avatar-backend-65ep.onrender.com/jobs');
+    assert.equal(options.method, 'POST');
+    assert.equal(options.body, '{}');
+    assert.equal(options.headers['content-type'], 'application/json');
+    return reply(401);
+  } });
+  assert.equal(result.status, 'denied');
+  for (const status of [200, 201, 400, 403]) {
+    await assert.rejects(trigger({ mode: 'scope', apiKey: key, fetchImpl: async () => reply(status) }), /scope check failed/);
+  }
 });
 
 test('cold-start/transient errors use bounded retries without raw exception details', async () => {

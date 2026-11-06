@@ -46,7 +46,7 @@ File: `.github/workflows/scheduler-manual.yml`; display name: **Avatar scheduler
 Only `workflow_dispatch` exists. No `schedule`, `push`, PR or other automatic event is enabled.
 The job runs only for `Daniel-opx/avatar-backend`, public visibility, branch `main`, on standard
 `ubuntu-24.04`. If repository visibility changes, the job is skipped instead of using private
-repository compute. No cache/artifact storage. Timeout is 25 minutes; overlapping manual runs
+repository compute. No cache/artifact storage. Timeout is 35 minutes; overlapping manual runs
 are serialized. Official checkout v6 is pinned to a verified full SHA, token permissions are
 contents-read only, and checkout does not persist credentials. GitHub logs are public: output
 contains only status, attempt count and elapsed time. No raw responses or business content.
@@ -57,6 +57,10 @@ one-off diagnostic; it does not enable recurring scheduling. Avoid opening backe
 the wait; Render/GitHub dashboards can be used. Record observed latency and verify idle evidence
 before claiming a natural cold start. **disabled-scheduler** mode uses
 `AVATAR_SCHEDULER_KEY` from GitHub repository secrets to POST and expects `disabled`.
+Authenticated manual modes also verify credential scope: POST `/jobs` with exactly `{}` must
+return 401. Even an accidentally supplied owner key cannot create a job with this empty request;
+the existing topic validator returns 400 instead, and the scope test fails without reading data.
+The scope check occurs BEFORE the idle wait, so it does not disturb the cold-start measurement.
 The client uses a fixed HTTPS destination, default TLS verification, no redirects, 120-second
 per-attempt timeout and at most 3 attempts. No scheduler frequency is implemented in the client.
 Mock tests verify bounded retries, immediate 401/403/409 failure and credential-safe error handling.
@@ -120,6 +124,14 @@ before activation. The owner has authorized no added charges.
 - Keep the external service separate from business recurrence; never encode daily/weekly rules there.
 
 ## Acceptance still outstanding
+
+Inactive recurring configuration is prepared at `docs/templates/scheduler-recurring.yml.example`.
+GitHub does not execute that directory or file extension. It proposes five-minute polling away
+from the hour boundary, requires a public original repository and explicit
+`AVATAR_SCHEDULER_ENABLED=true`, and uses `SCHEDULER_EXPECT_DISABLED=false` to accept future
+created/not_due results. CLI defaults remain health-only and expect-disabled. Moving/activating
+this template and enabling DB scheduling both require separate owner authorization.
+No activation variable or business schedule has been enabled by this work.
 
 Use selected GitHub Actions with standard public runners and TLS verification; establish private
 secret setup; deploy scheduler-only authentication; perform a one-off test while DB scheduling
