@@ -50,6 +50,17 @@ was enabled. CLI `db advisors --remote=<private connection> --type all` returned
 this is the CLI's custom-Postgres advisor result, not a claim of a comprehensive security audit.
 New table RLS/grants are also directly exercised by the integration suite.
 
+Committed/pushed as `8c708a7`, deployed to the existing Render Free service:
+`dep-dbmodfff3r2c73b7nep0`, **Deploy succeeded | Live**, 2026-11-06 09:50 Asia/Jerusalem.
+Build `npm ci` reported zero vulnerabilities; no upgrade or paid resource added.
+Live checks: `/health` 200, `/ready` 200, unauthenticated processing POST 401.
+Authenticated processing POST tested through local HTTP against the live database: 200 disabled.
+The production owner-authenticated processing route was not separately exercised with the
+rotated Render owner credential; no secret was retrieved from the dashboard to do that.
+User selected **Keep the provider undecided** for Step 16. No provider/account/model is
+selected and no live LLM test budget is authorized. Provider-neutral preparation may proceed;
+real integration verification must wait for that choice, server credentials and budget.
+
 ## Step 12 implementation and evidence
 
 Added `scheduler.integration.test.js`; real PostgreSQL constraints and transactions are exercised
@@ -258,6 +269,6 @@ Reviewed build/runtime logs showed safe structured messages, no visible credenti
 - Rate limiting is per process and resets after restart; Render uses a conservative shared cap.
   Heavy unauthenticated traffic can consume the shared budget; this is not a distributed WAF.
 - Current shared key is temporary; team identities are Step 21.
-- Latest deployed source `dc4a9eb`; unrelated preexisting `test.js` edit preserved unstaged.
+- Latest deployed source `8c708a7`; unrelated preexisting `test.js` edit preserved unstaged.
 - No migration ledger yet; future schema work needs tracked transactional migration execution.
 - See `docs/DEPLOYMENT.md` for test commands, rotation sequence and migration recovery.
