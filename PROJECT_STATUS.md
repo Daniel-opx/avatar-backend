@@ -10,7 +10,7 @@ Original Hebrew architecture document: not found in the repository; requirements
 - [x] Step 12: scheduler reliability/recovery — isolated PostgreSQL tests executed successfully.
 - [x] Step 13: Free deployment, settings, authentication, restart and controlled post-idle recovery verified; infrastructure limitations documented.
 - [x] Step 14: GitHub-hosted health, scoped authentication and repeated post-idle triggers verified; recurring template prepared but intentionally inactive.
-- [ ] Step 15: durable processing/lifecycle, attempts, leases, retries and cancellation.
+- [x] Step 15: durable processing/lifecycle, attempts, leases, retries and cancellation; disabled by default, real provider adapters remain future work.
 - [ ] Step 16: provider abstraction and versioned structured Hebrew LLM content.
 - [ ] Step 17: protected creative assets and optional voice generation.
 - [ ] Step 18: HeyGen rendering provider and safe submission recovery.
@@ -26,6 +26,29 @@ Original Hebrew architecture document: not found in the repository; requirements
 - [ ] Step 28: durable audit, monitoring and alerts.
 - [ ] Step 29: full acceptance/security testing and authorized live demonstration.
 - [ ] Step 30: operational documentation and separately approved gradual launch.
+
+## Step 15 implementation and evidence
+
+Added a durable processing engine, owner-only manual processing/history/retry/cancel routes,
+and CLI-generated migration `supabase/migrations/20261106073647_durable_processing.sql`.
+New-job enqueue is transactional; existing jobs are not enrolled. Processing starts disabled.
+Stages stop at human review. No LLM, HeyGen or publishing adapter is registered yet.
+See [PROCESSING.md](docs/PROCESSING.md) for transitions, adapter contracts and PowerShell tests.
+
+PostgreSQL tests verify concurrent claims, retry backoff/exhaustion, permanent failure,
+lease expiry/restart recovery, stale completion fencing, cancellation, checkpoint rollback,
+pending-operation resume, timeout quarantine, private grants/RLS and lost commit acknowledgements.
+These use disposable schemas and controlled handlers; they do not verify real external APIs.
+Final regression run: `RUN_DB_TESTS=1; npm test` — 57 passing test records,
+zero failures/skips, including the lost-acknowledgement test. Syntax and whitespace checks passed.
+
+Live additive migration applied 2026-11-06 using Supabase CLI 3.0.0 `db query`.
+CLI initially rejected multi-statement input without applying changes; successfully submitted
+as one atomic DO block afterward. Before/after: 4 jobs; scheduling=false; processing=false;
+0 queued existing jobs. No generation, paid provider request, publishing or recurring trigger
+was enabled. CLI `db advisors --remote=<private connection> --type all` returned no issues;
+this is the CLI's custom-Postgres advisor result, not a claim of a comprehensive security audit.
+New table RLS/grants are also directly exercised by the integration suite.
 
 ## Step 12 implementation and evidence
 
