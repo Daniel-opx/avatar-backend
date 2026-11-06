@@ -1,17 +1,22 @@
 # Deployment and recovery — Step 13 preparation
 
-Status: reviewed source `92c274c` deployed with owner approval on the existing Render Free service.
+Status: reviewed source `5346676` deployed with owner approval on the existing Render Free service.
 Live at https://avatar-backend-65ep.onrender.com. Unattended automation is NOT authorized.
 HTTPS health/readiness passed; missing/old keys rejected. Owner-run fresh-key `GET /jobs`
 returned 200 on 2026-11-06. Build/start/health settings aligned; rebuild and restart recovery passed.
 Credential rotation is required after Render accessibility unexpectedly exposed the masked key.
-Natural idle cold-start verification and deployment of the conservative limiter correction remain pending.
+The conservative limiter correction was deployed and live-verified after old-instance draining.
+Natural idle cold-start verification and private credential rotation remain pending.
 See `PROJECT_STATUS.md` for the evidence and remaining acceptance work.
 
 ## Configuration
 
 Keep `.env` local and untracked. Required: `DATABASE_URL`, `API_KEY`.
 Optional: `PORT` (3000), `NODE_ENV`, `DATABASE_CA_CERT` (PEM text, real newlines or escaped `\n`).
+Optional `SCHEDULER_API_KEY`: distinct 32+ character secret granting only scheduler POST access.
+Configure privately in Render; copy only this limited key into GitHub Actions secret
+`AVATAR_SCHEDULER_KEY`. Leave the owner `API_KEY` out of GitHub. Absence preserves existing owner
+access; an explicitly empty, short, whitespace-padded or identical scheduler key fails startup.
 Production requires a key of at least 32 characters. Generate a cryptographically random key
 through the chosen secret manager during coordinated rotation. Never paste it in chat.
 `RENDER` is provided by Render; only that environment trusts one reverse-proxy hop.

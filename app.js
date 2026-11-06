@@ -29,7 +29,7 @@ function createApp({ pool = require('./db/pool'), logger = console.log, rateLimi
   });
   const json = express.json({ limit: '32kb' });
   app.use('/jobs', apiKeyAuth, json, jobsRouter);
-  app.use('/internal', apiKeyAuth, json, internalRouter);
+  app.use('/internal', apiKeyAuth.scheduler, json, internalRouter);
   app.use((req, res) => res.status(404).json({ error: 'Not found' }));
   app.use((error, req, res, next) => {
     if (res.headersSent) return next(error);

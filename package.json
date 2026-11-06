@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "node --test scheduler.test.js scheduler.integration.test.js security.test.js",
+    "test": "node --test scheduler.test.js scheduler.integration.test.js security.test.js scheduler-auth.test.js trigger-scheduler.test.js",
     "test:scheduler:db": "node --test scheduler.integration.test.js",
     "start": "node server.js"
   },

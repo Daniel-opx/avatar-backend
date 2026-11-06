@@ -8,8 +8,8 @@ Original Hebrew architecture document: not found in the repository; requirements
 
 - [x] Steps 1–11: existing backend and recurring scheduler; earlier live integration passed.
 - [x] Step 12: scheduler reliability/recovery — isolated PostgreSQL tests executed successfully.
-- [ ] Step 13: deployed on Free, settings aligned, rebuild/restart verified; limiter correction in progress; new credential rotation and idle cold-start check pending.
-- [ ] Step 14: external free Cron integration; leave real recurring execution disabled.
+- [ ] Step 13: deployed on Free, settings aligned, rebuild/restart and limiter verified; credential rotation and idle cold-start check pending.
+- [ ] Step 14: GitHub Actions selected; manual-only workflow and scheduler-only key implemented locally; remote test/secret setup pending. No recurring execution.
 - [ ] Step 15: durable processing/lifecycle, attempts, leases, retries and cancellation.
 - [ ] Step 16: provider abstraction and versioned structured Hebrew LLM content.
 - [ ] Step 17: protected creative assets and optional voice generation.
@@ -84,6 +84,12 @@ Local correction uses a conservative total service cap on Render (120/minute, he
 independent of IP/forwarded headers. Local/direct deployments retain per-IP limiting.
 Ten local test records passed, zero failed, one opt-in database suite skipped.
 New Render limiter regression passed; no scheduler/database logic changed.
+Correction committed/pushed as `5346676`, deployed successfully in
+`dep-dbmn3snf3r2c73b4trfg` using `npm ci` and `npm start` on the same Free service.
+An immediate live probe overlapped instance draining and was inconclusive. After draining,
+four consecutive `/ready` requests (including varied forwarded headers) all returned 200
+with one decreasing shared budget: 119, 118, 117, 116. `/health` returned 200; `/jobs`
+without a key returned 401. Live request-cap correction verified. No distributed guarantee claimed.
 
 Executed HTTPS checks against `https://avatar-backend-65ep.onrender.com`:
 - `GET /health`: 200.
@@ -102,6 +108,9 @@ Reviewed build/runtime logs showed safe structured messages, no visible credenti
 ## Environment and operational state
 
 - Existing: `DATABASE_URL`, `API_KEY`; optional `PORT`.
+- Optional `SCHEDULER_API_KEY`: separate 32+ character external trigger key, accepted only for
+  `POST /internal/run-scheduler`. It cannot authorize `/jobs` or other internal operations.
+  Must differ from `API_KEY`. Not configured automatically and not mandatory for existing owner access.
 - New: optional `DATABASE_CA_CERT` overrides the bundled public CA; `NODE_ENV=production` on Render.
 - Render-provided `RENDER` selects one trusted proxy hop; `NODE_VERSION` specified in blueprint.
 - Test only: `RUN_DB_TESTS=1` enables isolated database tests; excluded by default.
@@ -123,12 +132,14 @@ Reviewed build/runtime logs showed safe structured messages, no visible credenti
    Owner saved private `DATABASE_URL` and `API_KEY`; all four variable names verified saved.
    `NODE_ENV=production` and `NODE_VERSION=24.16.0` configured. Resumed existing Free service
    and manually deployed tested source `92c274c`. Deployment/HTTPS verified as above.
-3. Credential rotation now required again: while inspecting the existing Render page on
+3. Credential rotation incident: while inspecting the existing Render page on
    2026-11-06, its accessibility output unexpectedly included the saved key despite visual masking.
    Do not reproduce it in documentation or logs. Owner was informed; treat it as exposed.
-   Rotation must be completed privately by owner; avoid further full environment-page snapshots.
-   Prior local key was rejected; owner-run positive new-key check passed before this discovery.
-   External Cron must not receive this exposed credential.
+   Owner reported private rotation/redeployment completed on 2026-11-06. Avoid further full
+   environment-page snapshots. Post-rotation public checks: `/health` 200 (745 ms), `/ready`
+   200 (1384 ms), missing-key `/jobs` 401. These were warm requests, not a cold-start test.
+   Successful authentication using the newly rotated value has not been independently verified.
+   External Cron must receive only the fresh private credential, never the exposed one.
 4. Original Hebrew architecture document if available.
 5. Later: account permissions and approved test budgets for LLM/HeyGen/GHL/Meta;
    verify current official APIs before each adapter, and distinguish mocked from live verification.
@@ -142,13 +153,28 @@ Reviewed build/runtime logs showed safe structured messages, no visible credenti
   returned 200 afterward. Subsequent owner-run authenticated `GET /jobs` returned 200.
   No key or plan changed during recovery.
 
-- Step 13 acceptance is NOT fully met: corrected limiter deployment verification,
-  credential rotation and natural idle cold-start verification remain pending.
+- Step 13 acceptance is NOT fully met: post-rotation authenticated check and natural idle cold-start
+  verification remain pending. Step 14 research is prepared in `docs/EXTERNAL_CRON.md`;
+  no provider account, remote job, credential transfer or recurring execution configured.
+- Step 14 local preparation: provider-independent `scripts/trigger-scheduler.js` implements
+  HTTPS-only fixed destination, redirect rejection, 120-second timeouts, bounded retries and
+  content/credential-safe output. Default mode is read-only health; scheduler mode expects disabled.
+  Six mock-based client tests passed; this is NOT an authenticated live provider integration.
+  Owner selected GitHub Actions after the security/free-tier comparison on 2026-11-06.
+  Added manual-only `.github/workflows/scheduler-manual.yml`: default read-only health,
+  optional authenticated disabled-scheduler test, no scheduled/PR/push triggers, 8-minute bound,
+  serialized runs, public/main/original-repository guard, contents-read token, pinned official
+  checkout revision with credential persistence disabled. No dependencies installed by this workflow.
+  Scheduler mode reads GitHub secret `AVATAR_SCHEDULER_KEY`; no owner API key is sent to GitHub.
+  New scheduler authorization implemented in middleware/app with optional startup validation.
+  Latest local `npm test`: 19 passed, 0 failed, 1 opt-in database suite skipped. Includes HTTP
+  routing tests using a fake database, key separation/denial tests and six mocked trigger tests.
+  Real GitHub workflow execution and authenticated production key separation remain unverified.
 - Verified TLS works with the supplied CA; track its 2031 expiry and review provider CA changes.
 - Render Free can sleep/restart; future processing must use durable checkpoints, not detached tasks.
 - Rate limiting is per process and resets after restart; Render uses a conservative shared cap.
   Heavy unauthenticated traffic can consume the shared budget; this is not a distributed WAF.
 - Current shared key is temporary; team identities are Step 21.
-- Deployment source committed/pushed as `92c274c`; unrelated preexisting `test.js` edit preserved unstaged.
+- Latest deployed source `5346676`; unrelated preexisting `test.js` edit preserved unstaged.
 - No migration ledger yet; future schema work needs tracked transactional migration execution.
 - See `docs/DEPLOYMENT.md` for test commands, rotation sequence and migration recovery.

@@ -1,7 +1,68 @@
 # Step 14 preparation — external free Cron (inactive)
 
-Status: researched only. No account created, secret shared, remote Cron job configured or activated.
-Step 13 still has a credential-rotation gate and an idle cold-start test to finish.
+Status: owner selected GitHub Actions on 2026-11-06. Provider-independent local trigger client
+and manual-only workflow prepared. No secret transferred or recurring execution configured.
+Owner reported key rotation complete. Step 13 still has post-rotation authentication and an idle
+cold-start check outstanding. Warm public readiness/health checks passed after rotation.
+
+## Comparison requested by owner, 2026-11-06
+
+GitHub Actions: public repository status confirmed via unauthenticated GitHub REST metadata
+for `Daniel-opx/avatar-backend`. Standard hosted runners in public repositories are free.
+Secrets belong in Actions Secrets, never code or logs. Fork PR runs have no secrets by default;
+never execute untrusted PR code with secret-enabled events. Protect workflow changes, limit
+token permissions and avoid unnecessary third-party actions. Public logs require minimal output.
+Schedules can be delayed/dropped and are disabled after 60 days without repository activity;
+this is an operational limitation, not disclosure of secret values. No workflow enabled.
+
+Upstash QStash: official Free pricing documents 1000 delivery attempts/day, 10 active schedules
+and up to 15-minute response duration. Each retry consumes a message. Five-minute polling is
+288 initial deliveries/day; with at most two retries per delivery the theoretical daily total is
+864 attempts, before other account usage. Verify actual Free account limits and no paid upgrade
+before enabling. Signed delivery JWTs can authenticate the provider; setup needs account and
+backend signature verification. This is more setup than the existing shared-header mechanism.
+API capabilities/pricing are researched, not verified using a real Upstash account or delivery.
+
+Selected by owner: GitHub Actions is reasonable for this small existing public repository
+when configured safely. QStash Free is a strong dedicated alternative for long response timeouts
+and retry support. GitHub Actions preparation is described below; no production schedule enabled.
+
+## Implemented manual workflow
+
+File: `.github/workflows/scheduler-manual.yml`; display name: **Avatar scheduler - manual verification**.
+Only `workflow_dispatch` exists. No `schedule`, `push`, PR or other automatic event is enabled.
+The job runs only for `Daniel-opx/avatar-backend`, public visibility, branch `main`, on standard
+`ubuntu-24.04`. If repository visibility changes, the job is skipped instead of using private
+repository compute. No cache/artifact storage. Timeout is 8 minutes; overlapping manual runs
+are serialized. Official checkout v6 is pinned to a verified full SHA, token permissions are
+contents-read only, and checkout does not persist credentials. GitHub logs are public: output
+contains only status, attempt count and elapsed time. No raw responses or business content.
+
+Default **health** mode is GET-only and needs no secret. **disabled-scheduler** mode uses
+`AVATAR_SCHEDULER_KEY` from GitHub repository secrets to POST and expects `disabled`.
+The client uses a fixed HTTPS destination, default TLS verification, no redirects, 120-second
+per-attempt timeout and at most 3 attempts. No scheduler frequency is implemented in the client.
+Mock tests verify bounded retries, immediate 401/403/409 failure and credential-safe error handling.
+
+## Private owner setup (after backend deployment)
+
+1. In Render → avatar-backend → Environment → Edit, add `SCHEDULER_API_KEY` with a NEW
+   random value of at least 32 characters, different from `API_KEY`. Keep the owner key unchanged.
+   Generate/enter/save this privately. Do not send it in chat or expose it in screenshots.
+   Save/redeploy the reviewed backend. Never expose this page through full accessibility snapshots.
+2. In GitHub → Daniel-opx/avatar-backend → Settings → Secrets and variables → Actions,
+   choose New repository secret. Name: `AVATAR_SCHEDULER_KEY`. Value: the SAME new scheduler-only
+   value saved in Render. Add secret privately. This is not the GitHub account API token and
+   not the owner `API_KEY`, database URL, Supabase service key or QStash token.
+3. Keep PostgreSQL scheduling disabled. In Actions → Avatar scheduler - manual verification,
+   Run workflow on main with **health** first; then **disabled-scheduler**.
+4. Expected authenticated log: a short JSON result with `status: disabled`, HTTP 200.
+   Confirm the scheduler key gets 401 for `/jobs` in a controlled test. Keep job counts unchanged.
+5. Do not add a schedule event or enable business scheduling without separate owner authorization.
+
+Owner must complete new credential entry/submission; assistant can inspect secret NAMES only.
+Maintainers who can edit secret-enabled workflow code can misuse the secret: review/protect
+workflow changes, never run untrusted fork code with credentials, and do not rely solely on masking.
 
 ## Provider assessment, checked 2026-11-06
 
@@ -43,9 +104,9 @@ before activation. The owner has authorized no added charges.
 
 ## Acceptance still outstanding
 
-Choose a TLS-verifying provider compatible with Free cold-start delays and zero extra charges;
-establish private account access; rotate the exposed key; configure one disabled job; authorize
-a one-off test while DB scheduling remains disabled; verify authenticated response, duplicate
+Use selected GitHub Actions with standard public runners and TLS verification; establish private
+secret setup; deploy scheduler-only authentication; perform a one-off test while DB scheduling
+remains disabled; verify authenticated response, duplicate
 behavior, failure reporting and cold-start retry through that provider. Leave recurring execution
 disabled even after testing. No Step 14 integration is claimed complete from these notes.
 
@@ -57,3 +118,12 @@ disabled even after testing. No Step 14 integration is claimed complete from the
 - https://render.com/docs/health-checks
 - https://render.com/docs/deploys
 - https://expressjs.com/en/guide/behind-proxies/
+- https://docs.github.com/en/billing/concepts/product-billing/github-actions
+- https://docs.github.com/en/actions/concepts/security/secrets
+- https://docs.github.com/en/actions/reference/security/securely-using-pull_request_target
+- https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule
+- https://upstash.com/pricing/qstash
+- https://upstash.com/docs/qstash/features/security
+- https://upstash.com/docs/qstash/api-reference/messages/publish-a-message
+- https://github.com/actions/checkout
+- https://docs.github.com/en/actions/how-tos/write-workflows/choose-what-workflows-do/use-secrets

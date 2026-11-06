@@ -1,0 +1,45 @@
+name: Avatar scheduler - manual verification
+
+# No schedule, push, PR or repository_dispatch triggers. Activation requires a separate review.
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: Read-only health or authenticated test expecting scheduling disabled
+        type: choice
+        default: health
+        options:
+          - health
+          - disabled-scheduler
+
+permissions:
+  contents: read
+
+concurrency:
+  group: avatar-scheduler-manual
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    # Standard public-repository runners only; skip rather than incur private-repository usage.
+    if: github.event.repository.private == false && github.repository == 'Daniel-opx/avatar-backend' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - name: Check out reviewed source
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # official v6, verified 2026-11-06
+        with:
+          persist-credentials: false
+      - name: Test the provider-independent trigger
+        run: node --test trigger-scheduler.test.js
+      - name: Check health without credentials
+        if: inputs.mode == 'health'
+        env:
+          SCHEDULER_MODE: health
+        run: node scripts/trigger-scheduler.js
+      - name: Verify authenticated scheduler stays disabled
+        if: inputs.mode == 'disabled-scheduler'
+        env:
+          SCHEDULER_MODE: scheduler
+          SCHEDULER_API_KEY: ${{ secrets.AVATAR_SCHEDULER_KEY }}
+        run: node scripts/trigger-scheduler.js

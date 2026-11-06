@@ -7,6 +7,12 @@ function validateEnvironment(env = process.env) {
   try { url = new URL(env.DATABASE_URL); } catch { throw new Error('DATABASE_URL must be a PostgreSQL URL'); }
   if (!['postgres:', 'postgresql:'].includes(url.protocol)) throw new Error('DATABASE_URL must be a PostgreSQL URL');
   if (!env.API_KEY) throw new Error('API_KEY is required');
+  if (env.SCHEDULER_API_KEY !== undefined) {
+    if (env.SCHEDULER_API_KEY.length < 32 || env.SCHEDULER_API_KEY !== env.SCHEDULER_API_KEY.trim()) {
+      throw new Error('SCHEDULER_API_KEY must contain at least 32 characters with no surrounding whitespace');
+    }
+    if (env.SCHEDULER_API_KEY === env.API_KEY) throw new Error('SCHEDULER_API_KEY must differ from API_KEY');
+  }
   if (env.NODE_ENV === 'production' && env.API_KEY.length < 32) throw new Error('Production API_KEY must contain at least 32 characters');
   const port = Number(env.PORT || 3000);
   if (!Number.isInteger(port) || port < 1 || port > 65535) throw new Error('PORT must be between 1 and 65535');
