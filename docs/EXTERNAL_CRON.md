@@ -1,13 +1,18 @@
-# Step 14 preparation — external free Cron (inactive)
+# Step 14 — external free Cron (recurring execution inactive)
+
+Current handoff: development paused after Step 15 on 2026-11-06. Manual GitHub tests are
+verified; recurring runs remain unconfigured, and database scheduling/processing remain
+disabled. Latest overall regression suite: 57 passed, zero failures/skips.
+See [PROJECT_STATUS.md](../PROJECT_STATUS.md) for the current deployment and evidence.
 
 Status: owner selected GitHub Actions on 2026-11-06. Provider-independent local trigger client
 and manual-only workflow published in `dc4a9eb`. Backend scheduler-key support deployed to Render.
 Owner completed sign-in; manually dispatched GitHub-hosted health run `42176151233` passed
 on main/source `dc4a9eb`, 2026-11-06 08:42 Asia/Jerusalem (13 seconds total, 5-second job).
 Evidence: https://github.com/Daniel-opx/avatar-backend/actions/runs/42176151233
-The run used no secret and created no business jobs. New-secret form was prepared with only
-name `AVATAR_SCHEDULER_KEY`; owner must enter/save the value after creating the limited key
-in Render. Authenticated remote integration is NOT verified by the health-only run.
+The run used no secret and created no business jobs. The owner subsequently saved the
+limited credential privately as `AVATAR_SCHEDULER_KEY` in GitHub and `SCHEDULER_API_KEY`
+in Render. The health-only run did not establish authenticated integration; later runs below did.
 Earlier local client health mode returned 200 in 623 ms; this was separate from the GitHub run.
 Owner stored the scheduler-only secret privately in both services. GitHub authenticated run
 `42176661336` attempt 1 failed 401 because the saved Render setting was not deployed.

@@ -1,5 +1,9 @@
 # Durable processing (Step 15)
 
+Implemented and deployed (`8c708a7`); development paused by the owner on 2026-11-06.
+Processing remains disabled. Final regression suite: 57 passed, zero failures/skips.
+All provider handlers used in tests are controlled test code; no live provider is integrated.
+
 Job creation and video execution are separate. `jobs.status` retains its existing values.
 Every newly inserted job gets a `job_processing` row in the same transaction, including
 scheduler-created jobs. Existing jobs are not backfilled. A failed enqueue rolls back

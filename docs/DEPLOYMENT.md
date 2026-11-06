@@ -1,6 +1,10 @@
-# Deployment and recovery — Step 13 preparation
+# Deployment and recovery
 
-Status: reviewed source `dc4a9eb` deployed with owner approval on the existing Render Free service.
+Status: reviewed application source `8c708a7` deployed on the existing Render Free service.
+Development paused by the owner after Step 15 on 2026-11-06. Both scheduling and processing
+remain disabled. Deployment `dep-dbmodfff3r2c73b7nep0` succeeded; live health/readiness returned
+200. Authenticated processing was checked locally against the live database (200 disabled);
+the production owner-authenticated processing route has not been separately exercised.
 Live at https://avatar-backend-65ep.onrender.com. Unattended automation is NOT authorized.
 HTTPS health/readiness passed; missing/old keys rejected. Owner-run fresh-key `GET /jobs`
 returned 200 on 2026-11-06. Build/start/health settings aligned; rebuild and restart recovery passed.
@@ -43,7 +47,7 @@ npm test
 Remove-Item Env:RUN_DB_TESTS
 ```
 
-Database tests create/drop only a unique `step12_test_<uuid>` schema. They require schema
+Database tests create/drop unique `step12_test_<uuid>` and `step15_test_<uuid>` schemas. They require schema
 creation permission and a valid CA. They never enable or mutate the live schedule.
 Use the disposable-schema suite instead of `test-step11-live.js` for ongoing regression testing.
 The old Step 11 script temporarily changes live scheduler configuration and retains test jobs.
@@ -79,6 +83,12 @@ Do not use `req.ip` for authorization or security-sensitive decisions without ve
 
 Use versioned SQL files, review on an isolated schema, then apply in a transaction.
 Migration 011 can be repeated and preserves schedule configuration. It does not enable automation.
+Step 15's additive migration was applied once and starts processing disabled, without
+enrolling existing jobs. It is not repeatable; see [PROCESSING.md](PROCESSING.md) for the
+CLI single-statement workaround and recovery/adapter contracts. Keep these additive tables
+when rolling the application back. The enqueue trigger remains installed, so new job inserts
+still create queue rows even if older application code is restored; disabled processing
+prevents their execution. Last verified live state: 4 jobs, 0 queued existing jobs.
 For an application rollback retain the additive columns; the old scheduler ignores them.
 Disable scheduling before rollback: older code consumes a slot and disables recurrence.
 Do not drop columns or delete jobs as a rollback shortcut. Confirm backups in Supabase before

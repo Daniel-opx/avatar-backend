@@ -4,6 +4,19 @@ Updated: 2026-11-06 (Asia/Jerusalem).
 Authoritative roadmap: [DEVELOPMENT_ROADMAP.md](docs/DEVELOPMENT_ROADMAP.md).
 Original Hebrew architecture document: not found in the repository; requirements depending on it remain unresolved.
 
+## Paused handoff — 2026-11-06
+
+Development stopped at the owner's request after completing Step 15. Do not resume
+implementation until requested. Step 16 has not started; AI provider remains undecided.
+Latest application deployment: `8c708a7` on the existing Render Free service; subsequent
+commits update documentation only and do not require redeploying the application.
+Last verified database state: 4 jobs, scheduling=false, processing=false, 0 queued jobs,
+0 leftover Step 15 test schemas. GitHub workflow remains manual-only. No paid provider
+calls, automatic publication, advertising or unattended processing were enabled.
+Last complete regression suite: 57 passed, zero failures/skips.
+The preexisting local `test.js` modification is intentionally left uncommitted and unchanged;
+it is not part of the reviewed/deployed application commits.
+
 ## Checklist
 
 - [x] Steps 1–11: existing backend and recurring scheduler; earlier live integration passed.
