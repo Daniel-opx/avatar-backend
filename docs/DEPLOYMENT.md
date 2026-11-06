@@ -1,6 +1,12 @@
 # Deployment and recovery — Step 13 preparation
 
-Status: local implementation; NOT deployed or approved for production activation.
+Status: reviewed source `92c274c` deployed with owner approval on the existing Render Free service.
+Live at https://avatar-backend-65ep.onrender.com. Unattended automation is NOT authorized.
+HTTPS health/readiness passed; missing/old keys rejected. Owner-run fresh-key `GET /jobs`
+returned 200 on 2026-11-06. Build/start/health settings aligned; rebuild and restart recovery passed.
+Credential rotation is required after Render accessibility unexpectedly exposed the masked key.
+Natural idle cold-start verification and deployment of the conservative limiter correction remain pending.
+See `PROJECT_STATUS.md` for the evidence and remaining acceptance work.
 
 ## Configuration
 
@@ -53,10 +59,14 @@ Blueprint structure is prepared from current official docs, not validated by the
 6. Check graceful restart and readiness; inspect redacted logs.
 7. Keep Cron, external generation, publication and advertising disabled.
 
-Rate limits use process memory and reset after restart; acceptable for one small free service,
-not distributed abuse protection. Health remains unthrottled. Body limit: 32 KiB.
+Rate limits use process memory and reset after restart. Render applies a shared 120-request/minute
+cap because live ingress IP buckets were unstable even on one persistent connection. Local/direct
+deployments use per-IP limits. This is not distributed abuse protection; unauthenticated callers
+can consume the shared budget. Health remains unthrottled. Body limit: 32 KiB.
 Graceful shutdown stops accepting traffic, drains requests and ends the pool, with a 25-second cap.
-Render cold-start behavior and trusted proxy routing require verification against the target service.
+Restart recovery passed. Natural idle cold-start behavior still requires timed verification.
+Do not assume one trusted proxy hop yields an authoritative client IP on this deployment.
+Do not use `req.ip` for authorization or security-sensitive decisions without verified ingress trust.
 
 ## Migration and recovery
 

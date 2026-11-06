@@ -58,3 +58,19 @@ test('HTTP authentication, body limits, readiness, logs and rate limits', async 
     else process.env.API_KEY = previousKey;
   }
 });
+
+test('Render request cap cannot be bypassed by changing forwarded addresses', async () => {
+  const app = createApp({ logger() {}, render: true, rateLimitMax: 1,
+    pool: { async query() { return { rows: [] }; } } });
+  const server = app.listen(0, '127.0.0.1');
+  await new Promise(resolve => server.once('listening', resolve));
+  const url = `http://127.0.0.1:${server.address().port}/ready`;
+  try {
+    const first = await fetch(url, { headers: { 'x-forwarded-for': '198.51.100.1, 203.0.113.10' } });
+    assert.equal(first.status, 200);
+    const spoofed = await fetch(url, { headers: { 'x-forwarded-for': '198.51.100.2, 203.0.113.10' } });
+    assert.equal(spoofed.status, 429);
+    const differentClient = await fetch(url, { headers: { 'x-forwarded-for': '203.0.113.11' } });
+    assert.equal(differentClient.status, 429);
+  } finally { await new Promise(resolve => server.close(resolve)); }
+});

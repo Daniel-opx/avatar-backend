@@ -18,7 +18,10 @@ function createApp({ pool = require('./db/pool'), logger = console.log, rateLimi
     next();
   });
   app.get('/health', (req, res) => res.json({ status: 'ok', message: 'Avatar backend is running' }));
-  app.use(rateLimit({ windowMs: 60000, limit: rateLimitMax, standardHeaders: 'draft-8',
+  // Render ingress produced varying IP buckets even over one persistent connection.
+  // Bound total work for this small service instead of trusting an unverified IP chain.
+  app.use(rateLimit({ windowMs: 60000, limit: rateLimitMax,
+    ...(render ? { keyGenerator: () => 'render-service' } : {}), standardHeaders: 'draft-8',
     legacyHeaders: false, message: { error: 'Too many requests; retry later' } }));
   app.get('/ready', async (req, res) => {
     try { await pool.query('SELECT 1'); res.json({ status: 'ready' }); }

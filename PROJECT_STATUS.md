@@ -1,6 +1,6 @@
 # AI Avatar Automation — development status
 
-Updated: 2026-11-05 (Asia/Jerusalem).
+Updated: 2026-11-06 (Asia/Jerusalem).
 Authoritative roadmap: [DEVELOPMENT_ROADMAP.md](docs/DEVELOPMENT_ROADMAP.md).
 Original Hebrew architecture document: not found in the repository; requirements depending on it remain unresolved.
 
@@ -8,7 +8,7 @@ Original Hebrew architecture document: not found in the repository; requirements
 
 - [x] Steps 1–11: existing backend and recurring scheduler; earlier live integration passed.
 - [x] Step 12: scheduler reliability/recovery — isolated PostgreSQL tests executed successfully.
-- [ ] Step 13: local hardening and verified Supabase TLS passed; production deployment/rotation pending.
+- [ ] Step 13: deployed on Free, settings aligned, rebuild/restart verified; limiter correction in progress; new credential rotation and idle cold-start check pending.
 - [ ] Step 14: external free Cron integration; leave real recurring execution disabled.
 - [ ] Step 15: durable processing/lifecycle, attempts, leases, retries and cancellation.
 - [ ] Step 16: provider abstraction and versioned structured Hebrew LLM content.
@@ -66,6 +66,39 @@ A separate read-only verified-TLS query confirmed the live schedule remains disa
 Generated test schema was removed by the test cleanup. No live data/schema migrations applied.
 `node --check` passed for server, app, config and integration test; `git diff --check` passed.
 
+Production deployment: `dep-dbmcppe417fc73c3d3pg`, reviewed source `92c274c`,
+Render dashboard status **Deploy succeeded | Live**, 2026-11-05 20:37 Asia/Jerusalem.
+Existing Free service resumed; no paid resources added or plan upgrades performed.
+Build used Node 24.16.0 and existing `npm install` / `node server.js` settings.
+On 2026-11-06 actual settings were aligned to `npm ci`, `npm start` and `/health`.
+Manual rebuild `dep-dbmn0iqjnfac73av08ag` succeeded using those commands, source `92c274c`.
+Render's Events page confirmed a deliberate service restart at 08:16 Asia/Jerusalem.
+During the restart a readiness probe returned 502; subsequent health/readiness probes returned 200.
+Job count before/after: 4; scheduled-job count: 3; scheduling enabled: false throughout.
+This verifies restart recovery; a naturally idle Free cold-start has NOT yet been timed/verified.
+
+Live ingress investigation: rate-limit remaining counters varied even on a single reused TLS
+connection with unchanged headers. This does not establish a header-spoofing vulnerability;
+it establishes that the one-hop IP model does not provide a stable per-client bucket here.
+Local correction uses a conservative total service cap on Render (120/minute, health exempt),
+independent of IP/forwarded headers. Local/direct deployments retain per-IP limiting.
+Ten local test records passed, zero failed, one opt-in database suite skipped.
+New Render limiter regression passed; no scheduler/database logic changed.
+
+Executed HTTPS checks against `https://avatar-backend-65ep.onrender.com`:
+- `GET /health`: 200.
+- `GET /ready`: 200 (verified-TLS database connectivity from Render).
+- Unauthenticated `GET /jobs`: 401.
+- Unauthenticated `POST /internal/run-scheduler`: 401.
+- `GET /jobs` with previous local API key: 401; old key is not accepted by production.
+
+No job creation performed during these deployment checks. Fresh production API key remains
+private. On 2026-11-06 the owner ran the read-only production `GET /jobs` test with that key
+and reported `HTTP 200 - authenticated request succeeded`. This is owner-executed live evidence;
+the assistant did not access the key or independently repeat that authenticated request.
+Local `.env` still contains the local key; no attempt made to overwrite or synchronize it.
+Reviewed build/runtime logs showed safe structured messages, no visible credential values.
+
 ## Environment and operational state
 
 - Existing: `DATABASE_URL`, `API_KEY`; optional `PORT`.
@@ -74,7 +107,8 @@ Generated test schema was removed by the test cleanup. No live data/schema migra
 - Test only: `RUN_DB_TESTS=1` enables isolated database tests; excluded by default.
 - `.env` unchanged; ignored and not tracked in current Git index.
 - No external provider credentials inspected or verified; no LLM/HeyGen/GHL/Meta requests made.
-- No publishing, paid API requests, advertisements, unattended automation or deployments enabled.
+- Backend deployed with approval on existing Render Free; no publishing, paid API requests,
+  advertisements or unattended automation enabled. Auto-Deploy remains Off.
 - Live schedule was disabled after Step 11; Step 12 tests never modify it.
 - Two labelled Step 11 test jobs remain, intentionally retained.
 
@@ -85,11 +119,16 @@ Generated test schema was removed by the test cleanup. No live data/schema migra
    Confirmed: existing Free `avatar-backend`, service `srv-dbljvqou01pc73aea2u0`,
    repository `Daniel-opx/avatar-backend`, branch `main`. Owner authorized deployment/resume
    subject to no additional charges. No paid resource, upgrade or automation activation authorized.
-   Dashboard inspected: suspended; no environment variables or linked groups configured.
    Auto-Deploy changed from On Commit to Off and saved, preventing a push from launching code.
-   Deployment is pending secure environment setup; service has not been resumed.
-3. Coordinated rotation of previously exposed shared API key before public deployment.
-   Existing key has not been changed or printed.
+   Owner saved private `DATABASE_URL` and `API_KEY`; all four variable names verified saved.
+   `NODE_ENV=production` and `NODE_VERSION=24.16.0` configured. Resumed existing Free service
+   and manually deployed tested source `92c274c`. Deployment/HTTPS verified as above.
+3. Credential rotation now required again: while inspecting the existing Render page on
+   2026-11-06, its accessibility output unexpectedly included the saved key despite visual masking.
+   Do not reproduce it in documentation or logs. Owner was informed; treat it as exposed.
+   Rotation must be completed privately by owner; avoid further full environment-page snapshots.
+   Prior local key was rejected; owner-run positive new-key check passed before this discovery.
+   External Cron must not receive this exposed credential.
 4. Original Hebrew architecture document if available.
 5. Later: account permissions and approved test budgets for LLM/HeyGen/GHL/Meta;
    verify current official APIs before each adapter, and distinguish mocked from live verification.
@@ -97,12 +136,19 @@ Generated test schema was removed by the test cleanup. No live data/schema migra
 
 ## Remaining risks and next actions
 
-- Step 13 acceptance is NOT met: target deployment, HTTPS checks, proxy behavior,
-  rotation and production restart/cold-start tests remain pending.
+- 2026-11-06: owner's authenticated test reached Render's suspended-service page, so it did
+  not exercise application authentication. Dashboard confirmed owner-suspended status on Free.
+  Resumed the existing service with prior authorization; HTTPS `/health` and `/ready` both
+  returned 200 afterward. Subsequent owner-run authenticated `GET /jobs` returned 200.
+  No key or plan changed during recovery.
+
+- Step 13 acceptance is NOT fully met: corrected limiter deployment verification,
+  credential rotation and natural idle cold-start verification remain pending.
 - Verified TLS works with the supplied CA; track its 2031 expiry and review provider CA changes.
 - Render Free can sleep/restart; future processing must use durable checkpoints, not detached tasks.
-- Rate limiting is per process and resets after restart; no distributed rate-limit store configured.
+- Rate limiting is per process and resets after restart; Render uses a conservative shared cap.
+  Heavy unauthenticated traffic can consume the shared budget; this is not a distributed WAF.
 - Current shared key is temporary; team identities are Step 21.
-- Existing edits from before this roadmap were preserved; nothing committed or pushed.
+- Deployment source committed/pushed as `92c274c`; unrelated preexisting `test.js` edit preserved unstaged.
 - No migration ledger yet; future schema work needs tracked transactional migration execution.
 - See `docs/DEPLOYMENT.md` for test commands, rotation sequence and migration recovery.
