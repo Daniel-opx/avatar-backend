@@ -1,7 +1,20 @@
 # Step 14 preparation — external free Cron (inactive)
 
 Status: owner selected GitHub Actions on 2026-11-06. Provider-independent local trigger client
-and manual-only workflow prepared. No secret transferred or recurring execution configured.
+and manual-only workflow published in `dc4a9eb`. Backend scheduler-key support deployed to Render.
+Owner completed sign-in; manually dispatched GitHub-hosted health run `42176151233` passed
+on main/source `dc4a9eb`, 2026-11-06 08:42 Asia/Jerusalem (13 seconds total, 5-second job).
+Evidence: https://github.com/Daniel-opx/avatar-backend/actions/runs/42176151233
+The run used no secret and created no business jobs. New-secret form was prepared with only
+name `AVATAR_SCHEDULER_KEY`; owner must enter/save the value after creating the limited key
+in Render. Authenticated remote integration is NOT verified by the health-only run.
+Earlier local client health mode returned 200 in 623 ms; this was separate from the GitHub run.
+Owner stored the scheduler-only secret privately in both services. GitHub authenticated run
+`42176661336` attempt 1 failed 401 because the saved Render setting was not deployed.
+Redeployment `dep-dbmnh8ijnfac73b068eg` applied it. Attempt 2 succeeded (13 seconds total),
+confirming the expected HTTP 200/disabled response through GitHub's runner.
+Evidence: https://github.com/Daniel-opx/avatar-backend/actions/runs/42176661336/attempts/2
+No recurring execution configured. Natural idle cold-start verification remains pending.
 Owner reported key rotation complete. Step 13 still has post-rotation authentication and an idle
 cold-start check outstanding. Warm public readiness/health checks passed after rotation.
 
@@ -33,12 +46,16 @@ File: `.github/workflows/scheduler-manual.yml`; display name: **Avatar scheduler
 Only `workflow_dispatch` exists. No `schedule`, `push`, PR or other automatic event is enabled.
 The job runs only for `Daniel-opx/avatar-backend`, public visibility, branch `main`, on standard
 `ubuntu-24.04`. If repository visibility changes, the job is skipped instead of using private
-repository compute. No cache/artifact storage. Timeout is 8 minutes; overlapping manual runs
+repository compute. No cache/artifact storage. Timeout is 25 minutes; overlapping manual runs
 are serialized. Official checkout v6 is pinned to a verified full SHA, token permissions are
 contents-read only, and checkout does not persist credentials. GitHub logs are public: output
 contains only status, attempt count and elapsed time. No raw responses or business content.
 
-Default **health** mode is GET-only and needs no secret. **disabled-scheduler** mode uses
+Default **health** mode is GET-only and needs no secret. **cold-start-disabled-scheduler** waits
+16 minutes without calling the backend, then performs the same authenticated test. It is a
+one-off diagnostic; it does not enable recurring scheduling. Avoid opening backend URLs during
+the wait; Render/GitHub dashboards can be used. Record observed latency and verify idle evidence
+before claiming a natural cold start. **disabled-scheduler** mode uses
 `AVATAR_SCHEDULER_KEY` from GitHub repository secrets to POST and expects `disabled`.
 The client uses a fixed HTTPS destination, default TLS verification, no redirects, 120-second
 per-attempt timeout and at most 3 attempts. No scheduler frequency is implemented in the client.

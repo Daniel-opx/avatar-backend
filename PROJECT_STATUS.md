@@ -9,7 +9,7 @@ Original Hebrew architecture document: not found in the repository; requirements
 - [x] Steps 1–11: existing backend and recurring scheduler; earlier live integration passed.
 - [x] Step 12: scheduler reliability/recovery — isolated PostgreSQL tests executed successfully.
 - [ ] Step 13: deployed on Free, settings aligned, rebuild/restart and limiter verified; credential rotation and idle cold-start check pending.
-- [ ] Step 14: GitHub Actions selected; manual-only workflow and scheduler-only key implemented locally; remote test/secret setup pending. No recurring execution.
+- [ ] Step 14: GitHub-hosted health and authenticated disabled-scheduler tests passed; one-off cold-start verification pending. No recurring execution.
 - [ ] Step 15: durable processing/lifecycle, attempts, leases, retries and cancellation.
 - [ ] Step 16: provider abstraction and versioned structured Hebrew LLM content.
 - [ ] Step 17: protected creative assets and optional voice generation.
@@ -159,22 +159,49 @@ Reviewed build/runtime logs showed safe structured messages, no visible credenti
 - Step 14 local preparation: provider-independent `scripts/trigger-scheduler.js` implements
   HTTPS-only fixed destination, redirect rejection, 120-second timeouts, bounded retries and
   content/credential-safe output. Default mode is read-only health; scheduler mode expects disabled.
-  Six mock-based client tests passed; this is NOT an authenticated live provider integration.
+  Six mock-based client tests passed; live GitHub evidence is recorded below separately.
   Owner selected GitHub Actions after the security/free-tier comparison on 2026-11-06.
   Added manual-only `.github/workflows/scheduler-manual.yml`: default read-only health,
-  optional authenticated disabled-scheduler test, no scheduled/PR/push triggers, 8-minute bound,
+  optional authenticated disabled-scheduler test, no scheduled/PR/push triggers, bounded runtime,
   serialized runs, public/main/original-repository guard, contents-read token, pinned official
   checkout revision with credential persistence disabled. No dependencies installed by this workflow.
   Scheduler mode reads GitHub secret `AVATAR_SCHEDULER_KEY`; no owner API key is sent to GitHub.
   New scheduler authorization implemented in middleware/app with optional startup validation.
   Latest local `npm test`: 19 passed, 0 failed, 1 opt-in database suite skipped. Includes HTTP
   routing tests using a fake database, key separation/denial tests and six mocked trigger tests.
-  Real GitHub workflow execution and authenticated production key separation remain unverified.
+  Source committed/pushed as `dc4a9eb`. GitHub public API returned 200 and registered
+  `Avatar scheduler - manual verification`; browser showed zero runs. `active` workflow state
+  means it can be manually dispatched, not that a recurring schedule is enabled.
+  Deployed backend `dc4a9eb` to existing Render Free, deployment `dep-dbmnbh5g1s2s73bd49b0`:
+  dashboard **Deploy succeeded | Live**. Actual client health mode returned status ok, HTTP 200,
+  one attempt, 623 ms. `/ready` returned 200; missing-key `/jobs` returned 401.
+  Owner completed GitHub sign-in privately. Manually dispatched health mode on main/source
+  `dc4a9eb`: run `42176151233`, job `127754978420`, **Success**, total duration 13 seconds
+  (job 5 seconds), 2026-11-06 08:42 Asia/Jerusalem. This is a real GitHub-hosted workflow run;
+  it runs the six mocked client tests and the actual credential-free HTTPS health request.
+  No scheduler POST, business job creation, secret use or recurring activation occurred.
+  Run evidence: https://github.com/Daniel-opx/avatar-backend/actions/runs/42176151233
+  GitHub repository had no Actions secrets. Prepared blank new-secret form with name
+  `AVATAR_SCHEDULER_KEY` for owner entry/submission; value remains blank. No key generated/copied.
+  Next: owner creates distinct `SCHEDULER_API_KEY` privately in Render, saves/redeploys, and
+  stores the same value as GitHub `AVATAR_SCHEDULER_KEY`. Never use the owner API_KEY here.
+  Owner reported both private key entries saved on 2026-11-06; GitHub displayed only secret
+  name `AVATAR_SCHEDULER_KEY` and confirmation of creation. First authenticated run
+  `42176661336`, attempt 1, failed HTTP 401 (no automatic retry). Render variable NAMES only
+  confirmed `SCHEDULER_API_KEY` existed; running deployment preceded its setup. Redeployed saved
+  configuration as `dep-dbmnh8ijnfac73b068eg` (same source `dc4a9eb`), **Live**.
+  Reran same workflow, attempt 2: **Success**, 13 seconds total / 8-second job,
+  job `127757962880`, 2026-11-06 08:51 Asia/Jerusalem. Client enforces HTTP 200/status disabled.
+  Evidence: https://github.com/Daniel-opx/avatar-backend/actions/runs/42176661336/attempts/2
+  No credential values read or displayed. Authenticated provider connectivity now verified;
+  production `/jobs` denial using the scheduler key remains unit/HTTP-mock verified only.
+  Adding manual `cold-start-disabled-scheduler` mode: 16-minute no-request idle wait then
+  authenticated disabled test, total job bound 25 minutes. No schedule event is introduced.
 - Verified TLS works with the supplied CA; track its 2031 expiry and review provider CA changes.
 - Render Free can sleep/restart; future processing must use durable checkpoints, not detached tasks.
 - Rate limiting is per process and resets after restart; Render uses a conservative shared cap.
   Heavy unauthenticated traffic can consume the shared budget; this is not a distributed WAF.
 - Current shared key is temporary; team identities are Step 21.
-- Latest deployed source `5346676`; unrelated preexisting `test.js` edit preserved unstaged.
+- Latest deployed source `dc4a9eb`; unrelated preexisting `test.js` edit preserved unstaged.
 - No migration ledger yet; future schema work needs tracked transactional migration execution.
 - See `docs/DEPLOYMENT.md` for test commands, rotation sequence and migration recovery.

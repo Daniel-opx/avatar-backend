@@ -1,6 +1,6 @@
 # Deployment and recovery — Step 13 preparation
 
-Status: reviewed source `5346676` deployed with owner approval on the existing Render Free service.
+Status: reviewed source `dc4a9eb` deployed with owner approval on the existing Render Free service.
 Live at https://avatar-backend-65ep.onrender.com. Unattended automation is NOT authorized.
 HTTPS health/readiness passed; missing/old keys rejected. Owner-run fresh-key `GET /jobs`
 returned 200 on 2026-11-06. Build/start/health settings aligned; rebuild and restart recovery passed.

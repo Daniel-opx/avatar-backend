@@ -11,6 +11,7 @@ on:
         options:
           - health
           - disabled-scheduler
+          - cold-start-disabled-scheduler
 
 permissions:
   contents: read
@@ -24,7 +25,7 @@ jobs:
     # Standard public-repository runners only; skip rather than incur private-repository usage.
     if: github.event.repository.private == false && github.repository == 'Daniel-opx/avatar-backend' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-24.04
-    timeout-minutes: 8
+    timeout-minutes: 25
     steps:
       - name: Check out reviewed source
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # official v6, verified 2026-11-06
@@ -37,8 +38,12 @@ jobs:
         env:
           SCHEDULER_MODE: health
         run: node scripts/trigger-scheduler.js
+      - name: Allow the Free service to become idle
+        if: inputs.mode == 'cold-start-disabled-scheduler'
+        # One-off diagnostic only. No requests to Render during this 16-minute wait.
+        run: sleep 960
       - name: Verify authenticated scheduler stays disabled
-        if: inputs.mode == 'disabled-scheduler'
+        if: inputs.mode == 'disabled-scheduler' || inputs.mode == 'cold-start-disabled-scheduler'
         env:
           SCHEDULER_MODE: scheduler
           SCHEDULER_API_KEY: ${{ secrets.AVATAR_SCHEDULER_KEY }}
