@@ -8,7 +8,7 @@ Step 17 asset preparation passes mock/database checks, with external voice disab
 Step 18 mock rendering has a tested durable submission/poll journal; live verification is deferred.
 Step 19 adds mock authenticated callbacks, deduplication, retained media metadata and expiring
 review links. Production completion remains disabled; real media/account verification is pending.
-Latest application source deployed to the existing Render Free service: `b0aa3ff`.
+Latest application source deployed to the existing Render Free service: `21665a3`.
 Scheduling and processing remain disabled; GitHub Actions supports manual tests only.
 No generation, publishing, advertising, or paid provider integration is enabled.
 Current owner decision: continue with mocks only and no additional spending. Real LLM API

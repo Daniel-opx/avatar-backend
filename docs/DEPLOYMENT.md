@@ -11,9 +11,10 @@ Step 19 completion is likewise hard-disabled: no webhook secret, provider or sto
 is registered in production. Its private tables default inactive. Review/callback operations
 return disabled until a separate implementation/authorization for real accounts.
 
-Status: reviewed application source `b0aa3ff` deployed on the existing Render Free service.
-Step 18 mock rendering is implemented. Scheduling, processing, content, assets and rendering
-remain disabled. Deployment `dep-dbod04bm8hqs7387k500` succeeded on 2026-11-08; live health/readiness returned
+Status: reviewed application source `21665a3` deployed on the existing Render Free service.
+Step 19 mock callback/retention/review is implemented. Scheduling, processing, content, assets,
+rendering and completion remain disabled. Deployment `dep-dbodep15efls73di9ll0` succeeded on
+2026-11-08 at 22:11 Asia/Jerusalem; live health/readiness returned
 200. Authenticated processing was checked locally against the live database (200 disabled);
 the production owner-authenticated processing route has not been separately exercised.
 New content retrieval/regeneration routes reject unauthenticated requests (401); their owner
@@ -22,6 +23,12 @@ Asset GET/POST likewise reject unauthenticated requests (401); authenticated loc
 against the live disabled database returned GET 200 and registration 409 unconfigured.
 Rendering-history GET rejects unauthenticated requests (401); authenticated local wiring
 returned 200 with an empty journal. No real provider integration or media was verified.
+Step 19 video-history/reconciliation routes also reject anonymous requests (401); deployed
+callback/review operations return 503 disabled. Local owner-authenticated video history
+returned 200 empty; reconciliation and review issuance returned disabled/503. Full regression
+passed 131 tests; final focused checks passed 19 tests; the updated mock walkthrough passed.
+All new tables are private with RLS and denied client reads. The live database still has
+4 jobs and zero events/media/grants/provider calls. No real storage or account was activated.
 Live at https://avatar-backend-65ep.onrender.com. Unattended automation is NOT authorized.
 HTTPS health/readiness passed; missing/old keys rejected. Owner-run fresh-key `GET /jobs`
 returned 200 on 2026-11-06. Build/start/health settings aligned; rebuild and restart recovery passed.

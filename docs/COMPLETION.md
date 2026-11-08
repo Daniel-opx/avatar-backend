@@ -100,3 +100,6 @@ Verification on 2026-11-08: full serialized regression 131 passed; final focused
 suite 19 passed, zero failures/skips. Updated mock walkthrough passed. Hosted migration,
 private-table privileges and disabled local route wiring verified. Account-backed delivery,
 real file retention and playable video remain unverified.
+Application source `21665a3` deployed to the existing Render Free service. Live health/readiness
+returned 200, owner routes rejected anonymous requests with 401, and callback/review operations
+returned 503 disabled. No recurring trigger, external account or storage bucket was activated.

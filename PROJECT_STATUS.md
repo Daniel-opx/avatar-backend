@@ -15,7 +15,7 @@ remain outstanding. The ChatGPT membership and HeyGen free web plan are not trea
 funded backend API access. See [MOCK_DEVELOPMENT.md](docs/MOCK_DEVELOPMENT.md) for the policy
 and repeatable local walkthrough. No real provider activation or plan upgrade is authorized.
 Step 16 code and database tests passed; AI provider remains undecided and live verification is pending.
-Latest application deployment: `b0aa3ff` on the existing Render Free service; subsequent
+Latest application deployment: `21665a3` on the existing Render Free service; subsequent
 commits update documentation only and do not require redeploying the application.
 Last verified database state: 4 jobs, scheduling=false, processing=false, 0 queued jobs,
 content_enabled=false, assets_enabled=false, render_enabled=false, completion_enabled=false, provider/model unset,
@@ -84,6 +84,14 @@ three older unindexed foreign keys and unused indexes on inactive paths. No new 
 Authenticated local wiring against the live disabled database: video history 200 empty;
 review issuance and reconciliation 503 disabled. Public callback/review routes also 503.
 No owner key was read from Render or exposed. The unrelated local `test.js` edit is preserved.
+Implementation pushed as `21665a3`; manual deployment `dep-dbodep15efls73di9ll0` succeeded
+on the existing Render Free service on 2026-11-08 at 22:11 Asia/Jerusalem. Live health and
+database readiness returned 200; anonymous video-history/reconciliation requests returned
+401; webhook and bearer-review requests returned 503 disabled. Production owner-authenticated
+routes were verified locally against the live database, not with Render's rotated owner key.
+No automatic scheduler/processing, paid resource, real provider/storage call or publishing
+was enabled. Deployment proof saved as `step19-render-live.png` in the session visualization
+directory. Follow-up commits update documentation only; Step 20 has not started.
 
 ## Step 18 implementation and evidence
 
@@ -454,6 +462,6 @@ Reviewed build/runtime logs showed safe structured messages, no visible credenti
 - Rate limiting is per process and resets after restart; Render uses a conservative shared cap.
   Heavy unauthenticated traffic can consume the shared budget; this is not a distributed WAF.
 - Current shared key is temporary; team identities are Step 21.
-- Latest deployed source `b0aa3ff`; unrelated preexisting `test.js` edit preserved unstaged.
+- Latest deployed source `21665a3`; unrelated preexisting `test.js` edit preserved unstaged.
 - Step 16 has a hosted migration ledger entry; earlier DDL is untracked. Reconcile the baseline before using a general migration runner.
 - See `docs/DEPLOYMENT.md` for test commands, rotation sequence and migration recovery.
