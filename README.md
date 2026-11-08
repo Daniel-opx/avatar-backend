@@ -4,7 +4,7 @@ Node.js/Express backend for the AI Avatar automation system, using Supabase Post
 
 Development resumed for Step 16 on 2026-11-08. Steps 1–15 are complete; Step 16's
 content-generation implementation passes database/mocked tests; the provider remains undecided.
-Latest application source deployed to the existing Render Free service: `8c708a7`.
+Latest application source deployed to the existing Render Free service: `697380e`.
 Scheduling and processing remain disabled; GitHub Actions supports manual tests only.
 No generation, publishing, advertising, or paid provider integration is enabled.
 

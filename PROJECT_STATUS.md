@@ -8,12 +8,13 @@ Original Hebrew architecture document: not found in the repository; requirements
 
 Owner resumed development for Step 16 on 2026-11-08 after the Step 15 pause.
 Step 16 code and database tests passed; AI provider remains undecided and live verification is pending.
-Latest application deployment: `8c708a7` on the existing Render Free service; subsequent
+Latest application deployment: `697380e` on the existing Render Free service; subsequent
 commits update documentation only and do not require redeploying the application.
 Last verified database state: 4 jobs, scheduling=false, processing=false, 0 queued jobs,
-0 leftover Step 15 test schemas. GitHub workflow remains manual-only. No paid provider
+content_enabled=false, provider/model unset, max_requests=0, 0 content calls/versions,
+0 leftover Step 15/16 test schemas. GitHub workflow remains manual-only. No paid provider
 calls, automatic publication, advertising or unattended processing were enabled.
-Last complete regression suite: 57 passed, zero failures/skips.
+Last complete regression suite: 76 passed, zero failures/skips.
 The preexisting local `test.js` modification is intentionally left uncommitted and unchanged;
 it is not part of the reviewed/deployed application commits.
 
@@ -61,10 +62,23 @@ Migration applied through the Supabase connector, hosted version `20261108184837
 CLI-generated local file aligned to that version. Earlier schema migrations remain untracked.
 Live postcheck: 4 jobs, 0 content calls/versions, scheduling/processing/content all false,
 provider/model NULL, max_requests=0, requests_used=0.
+Live catalog verification: six content tables, all RLS enabled, all anon/authenticated
+SELECT privileges denied. Disposable Step 16 schemas remaining: 0.
+Authenticated local smoke test with the live database: content retrieval 200 (empty),
+processing POST 200 disabled. No production owner credential was read from Render.
 Advisors reported INFO only: intentionally private RLS tables without client policies,
 unused indexes on inactive queues, and unindexed prompt FKs / existing event FK. No warning
 or error findings; small config/prompt tables and retained prompt versions need no added
 indexes for this step. These notices are not a comprehensive security assurance.
+
+Source `697380e` committed/pushed and deployed to the existing Render Free service:
+`dep-dboc9ebm8hqs7385k24g`, **Deploy succeeded | Live**, 2026-11-08 20:51 Asia/Jerusalem.
+Build `npm ci` reported zero vulnerabilities. HTTPS checks after rollout: health/readiness
+200; unauthenticated content GET and regeneration POST both 401. No live owner-authenticated
+content call was performed using the rotated Render key; authenticated wiring was tested
+locally against the live disabled database. Post-deploy database state is unchanged:
+4 jobs, zero content calls/versions, all automation disabled, no provider/model/request allowance.
+No paid resource, live LLM test, publication or advertising was enabled. Step 17 not started.
 
 ## Step 15 implementation and evidence
 
@@ -308,6 +322,6 @@ Reviewed build/runtime logs showed safe structured messages, no visible credenti
 - Rate limiting is per process and resets after restart; Render uses a conservative shared cap.
   Heavy unauthenticated traffic can consume the shared budget; this is not a distributed WAF.
 - Current shared key is temporary; team identities are Step 21.
-- Latest deployed source `8c708a7`; unrelated preexisting `test.js` edit preserved unstaged.
+- Latest deployed source `697380e`; unrelated preexisting `test.js` edit preserved unstaged.
 - Step 16 has a hosted migration ledger entry; earlier DDL is untracked. Reconcile the baseline before using a general migration runner.
 - See `docs/DEPLOYMENT.md` for test commands, rotation sequence and migration recovery.

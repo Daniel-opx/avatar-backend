@@ -4,6 +4,9 @@ Provider-neutral content service with an optional OpenAI Responses adapter. The 
 not selected a provider/model or authorized a live test budget. Tests use controlled
 provider responses; no live LLM generation has been verified. No default model or pricing
 is assumed. No SDK/dependency or paid resource was added.
+Application source `697380e` deployed successfully to Render Free on 2026-11-08;
+health/readiness returned 200 and both new routes denied unauthenticated requests.
+Final regression: 76 passed, zero failures/skips. Live database has zero content calls/versions.
 
 ## Data and execution
 

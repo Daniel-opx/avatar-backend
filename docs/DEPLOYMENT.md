@@ -1,10 +1,12 @@
 # Deployment and recovery
 
-Status: reviewed application source `8c708a7` deployed on the existing Render Free service.
+Status: reviewed application source `697380e` deployed on the existing Render Free service.
 Development resumed for Step 16 on 2026-11-08. Scheduling, processing and content generation
-remain disabled. Deployment `dep-dbmodfff3r2c73b7nep0` succeeded; live health/readiness returned
+remain disabled. Deployment `dep-dboc9ebm8hqs7385k24g` succeeded on 2026-11-08; live health/readiness returned
 200. Authenticated processing was checked locally against the live database (200 disabled);
 the production owner-authenticated processing route has not been separately exercised.
+New content retrieval/regeneration routes reject unauthenticated requests (401); their owner
+authentication was exercised locally. Live provider-account verification remains pending.
 Live at https://avatar-backend-65ep.onrender.com. Unattended automation is NOT authorized.
 HTTPS health/readiness passed; missing/old keys rejected. Owner-run fresh-key `GET /jobs`
 returned 200 on 2026-11-06. Build/start/health settings aligned; rebuild and restart recovery passed.

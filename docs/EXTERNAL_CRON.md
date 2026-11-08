@@ -2,7 +2,7 @@
 
 Current handoff: development resumed for Step 16 on 2026-11-08. Manual GitHub tests are
 verified; recurring runs remain unconfigured, and database scheduling/processing remain
-disabled. Latest overall regression suite: 57 passed, zero failures/skips.
+disabled. Latest overall regression suite: 76 passed, zero failures/skips.
 See [PROJECT_STATUS.md](../PROJECT_STATUS.md) for the current deployment and evidence.
 
 Status: owner selected GitHub Actions on 2026-11-06. Provider-independent local trigger client
