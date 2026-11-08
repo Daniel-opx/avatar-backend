@@ -47,9 +47,11 @@ function createRenderService(pool,{schema='public',allowMock=false,provider=null
             [context.jobId,context.revision])).rows[0];
           if(!manifest)fail('ASSET_MANIFEST_MISSING');
           const payload=buildAvatarRequest(manifest.manifest,cfg);
-          row=(await run(`INSERT INTO public.render_requests(job_id,revision,state,token,payload,max_polls,poll_after_seconds)
-            VALUES($1,$2,'submitting',$3,$4,$5,$6) RETURNING *`,
-          [context.jobId,context.revision,token,payload,cfg.max_polls,cfg.poll_after_seconds])).rows[0];
+          const requestId=randomUUID();
+          payload.callback_id=requestId;
+          row=(await run(`INSERT INTO public.render_requests(job_id,revision,state,token,payload,max_polls,poll_after_seconds,id)
+            VALUES($1,$2,'submitting',$3,$4,$5,$6,$7) RETURNING *`,
+          [context.jobId,context.revision,token,payload,cfg.max_polls,cfg.poll_after_seconds,requestId])).rows[0];
         }else{
           row=(await run(`UPDATE public.render_requests SET state='submitting',token=$2,
             submission_attempts=submission_attempts+1,error_code=NULL,updated_at=clock_timestamp()

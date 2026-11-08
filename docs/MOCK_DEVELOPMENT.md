@@ -41,6 +41,9 @@ It simulates submission/polling and stops at a simulated human-review state. It 
 real video, makes no LLM/HeyGen/TTS requests, publishes nothing, and drops its schema afterward.
 The asset stage now uses Step 17's real metadata/manifest service with simulated configuration;
 the rendering stage now uses Step 18's request journal and HTTP-contract mock adapter.
+Step 19 also verifies a signed simulated callback, retention of labeled in-memory fixture
+bytes and an expiring review grant. No bearer token is printed. The fixture is not a playable
+video and is removed after the demo. See [COMPLETION.md](COMPLETION.md).
 No sample video file is produced. Real storage/media,
 avatar permissions and provider generation remain unverified; see [ASSETS.md](ASSETS.md).
 The mock video ID is retained only in the disposable render journal, never as a real

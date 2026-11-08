@@ -6,7 +6,7 @@ const jobsRouter = require('./routes/jobs');
 const internalRouter = require('./routes/internal');
 const apiKeyAuth = require('./middleware/apiKeyAuth');
 
-function createApp({ pool = require('./db/pool'), logger = console.log, rateLimitMax = 120, render = Boolean(process.env.RENDER) } = {}) {
+function createApp({ pool = require('./db/pool'), logger = console.log, rateLimitMax = 120, render = Boolean(process.env.RENDER), completion } = {}) {
   const app = express();
   app.disable('x-powered-by');
   app.set('trust proxy', render ? 1 : false);
@@ -28,7 +28,12 @@ function createApp({ pool = require('./db/pool'), logger = console.log, rateLimi
     catch { res.status(503).json({ status: 'unavailable' }); }
   });
   const json = express.json({ limit: '32kb' });
-  app.use('/jobs', apiKeyAuth, json, jobsRouter, require('./routes/content')(), require('./routes/assets')(), require('./routes/rendering')());
+  const video = require('./routes/video');
+  const callbacks = require('./routes/webhooks');
+  app.use('/webhooks', callbacks.webhookRouter(completion));
+  app.use('/review', callbacks.reviewRouter(completion));
+  app.use('/jobs', apiKeyAuth, json, jobsRouter, require('./routes/content')(), require('./routes/assets')(), require('./routes/rendering')(), video.videoRouter(completion));
+  app.use('/internal/videos', apiKeyAuth, json, video.reconcileRouter(completion));
   app.use('/internal/processing', apiKeyAuth, json, require('./routes/processing')());
   app.use('/internal', apiKeyAuth.scheduler, json, internalRouter);
   app.use((req, res) => res.status(404).json({ error: 'Not found' }));

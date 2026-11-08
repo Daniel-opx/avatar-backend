@@ -6,6 +6,8 @@ Development resumed for Step 16 on 2026-11-08. Steps 1–15 are complete; Step 1
 content-generation implementation passes database/mocked tests; the provider remains undecided.
 Step 17 asset preparation passes mock/database checks, with external voice disabled by default.
 Step 18 mock rendering has a tested durable submission/poll journal; live verification is deferred.
+Step 19 adds mock authenticated callbacks, deduplication, retained media metadata and expiring
+review links. Production completion remains disabled; real media/account verification is pending.
 Latest application source deployed to the existing Render Free service: `b0aa3ff`.
 Scheduling and processing remain disabled; GitHub Actions supports manual tests only.
 No generation, publishing, advertising, or paid provider integration is enabled.
@@ -21,8 +23,10 @@ access/budget and HeyGen API video credits/budget are still required before live
 - [Mock-only policy, outstanding account budgets and local demo](docs/MOCK_DEVELOPMENT.md)
 - [Private asset manifests, validation and optional mock voice](docs/ASSETS.md)
 - [Mock HeyGen rendering, duplicate protection and polling](docs/RENDERING.md)
+- [Mock callbacks, private retention and protected review](docs/COMPLETION.md)
 
 Run locally with `npm ci` then `npm start`. Configure credentials privately in `.env`;
 see the deployment guide. Run `npm test` for local checks; opt-in PostgreSQL test
-instructions are in the processing/content/asset/rendering guides. Last complete run: 114 passed, zero failures/skips.
+instructions are in the processing/content/asset/rendering/completion guides. Full regression:
+131 passed, zero failures/skips; final Step 19 checks are recorded in the project status.
 Run `npm run demo:mock` for a disposable simulated walkthrough; no real video is generated.

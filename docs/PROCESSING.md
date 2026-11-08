@@ -115,7 +115,8 @@ Apply once, after migration 011 and the original tables. CLI 3.0.0 `db query` re
 multi-statement files; submit the SQL between BEGIN/COMMIT inside a single atomic
 `DO $migration$ BEGIN ... END $migration$;` block, or use a migration-capable runner.
 It is transactional and intentionally fails if already installed. This repository still
-has no migration ledger; inspect schema before deployment instead of rerunning the file.
+has incomplete tracking of older migrations; Step 16 onward migrations are tracked in the
+hosted ledger. Inspect schema and ledger before deployment instead of rerunning files.
 
 References: [PostgreSQL locking / SKIP LOCKED](https://www.postgresql.org/docs/current/sql-select.html),
 [Supabase RLS](https://supabase.com/docs/guides/database/postgres/row-level-security).

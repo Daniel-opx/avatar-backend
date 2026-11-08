@@ -8,7 +8,8 @@ Original Hebrew architecture document: not found in the repository; requirements
 
 Owner resumed development for Step 16 on 2026-11-08 after the Step 15 pause.
 Owner subsequently authorized **mock-only continuation with no additional spending**.
-Current work: Step 18 mock rendering journal/adapter passed database/controlled-provider checks; live acceptance is deferred.
+Current work: Step 19 mock callback authentication, deduplication, retention and protected
+review passed database/controlled-provider checks; live provider acceptance remains deferred.
 Real LLM API account/model/credentials/budget and HeyGen API video credits/rendering budget
 remain outstanding. The ChatGPT membership and HeyGen free web plan are not treated as
 funded backend API access. See [MOCK_DEVELOPMENT.md](docs/MOCK_DEVELOPMENT.md) for the policy
@@ -17,11 +18,12 @@ Step 16 code and database tests passed; AI provider remains undecided and live v
 Latest application deployment: `b0aa3ff` on the existing Render Free service; subsequent
 commits update documentation only and do not require redeploying the application.
 Last verified database state: 4 jobs, scheduling=false, processing=false, 0 queued jobs,
-content_enabled=false, assets_enabled=false, render_enabled=false, provider/model unset,
+content_enabled=false, assets_enabled=false, render_enabled=false, completion_enabled=false, provider/model unset,
 max_requests=0, max_submissions=0, submissions_used=0, zero content/render calls and generated
 versions/assets/manifests/requests, no leftover test/demo schemas. GitHub workflow remains manual-only. No paid provider
 calls, automatic publication, advertising or unattended processing were enabled.
-Last complete regression suite: 114 passed, zero failures/skips.
+Last complete regression suite: 131 passed, zero failures/skips. Final Step 19-focused
+verification is recorded separately below because it includes subsequent recovery checks.
 The preexisting local `test.js` modification is intentionally left uncommitted and unchanged;
 it is not part of the reviewed/deployed application commits.
 
@@ -35,7 +37,7 @@ it is not part of the reviewed/deployed application commits.
 - [ ] Step 16: provider abstraction and versioned Hebrew content implemented/tested; chosen-account live test still pending.
 - [ ] Step 17: mock-only asset preparation implemented/tested; live media/avatar/voice acceptance deferred.
 - [ ] Step 18: mock HeyGen v3 adapter and durable submit/poll journal implemented/tested; live test deferred.
-- [ ] Step 19: authenticated/deduplicated callbacks, storage and reconciliation.
+- [ ] Step 19: mock authenticated/deduplicated callbacks, private fixture retention and review implemented; live acceptance pending.
 - [ ] Step 20: resumable generation pipeline ending at human review.
 - [ ] Step 21: team identities, roles and separate internal service authentication.
 - [ ] Step 22: auditable approvals tied to exact content versions.
@@ -47,6 +49,41 @@ it is not part of the reviewed/deployed application commits.
 - [ ] Step 28: durable audit, monitoring and alerts.
 - [ ] Step 29: full acceptance/security testing and authorized live demonstration.
 - [ ] Step 30: operational documentation and separately approved gradual launch.
+
+## Step 19 implementation and evidence
+
+Added raw-body HMAC-SHA256 verification, a durable minimal inbox, logical event/delivery
+deduplication and callback/request correlation. Callback URLs and raw payloads are discarded.
+Owner-triggered reconciliation checks the authoritative mock resource and handles early,
+missed, delayed and contradictory terminal signals. Leases and tokens fence concurrent/late
+workers. Bounded media retries reuse deterministic object identities without generating a
+replacement video. Protected expiring review grants store only token hashes, check current
+revision/cancellation and validate retained size/hash. Scheduler-scoped credentials cannot
+access these owner routes. All four new tables are private/RLS-enabled.
+
+No real callback registration, provider secret, media download, storage bucket or paid call.
+Production completion is hard-disabled and its database configuration defaults false.
+Fixture bytes are labeled mock, in-memory and not playable video. Real durable storage,
+provider/account-backed authenticity and output remain unverified. Step 20 pipeline composition
+is not started; standalone Step 18 completion can precede retention, while review links always
+require retained media. See [COMPLETION.md](docs/COMPLETION.md).
+
+Initial focused checks: 15 passed. Full serialized regression: 131 passed, zero failures/skips
+(373.9 seconds). Final Step 19 checks after recovery/constraint refinements: 19 passed,
+zero failures/skips (87.0 seconds), including two additional tests beyond the full run.
+All provider/retention behavior used controlled mocks; PostgreSQL state was real and isolated.
+Updated `npm run demo:mock` passed with one mock render submission, accepted mock callback,
+retained 71-byte non-playable fixture and verified expiring grant; zero real calls/publication,
+production settings unchanged and disposable schema removed. Applied additive migration
+`20261108200903_webhook_media.sql` through the Supabase connector; local CLI-generated file
+aligned to the hosted ledger. No bucket, webhook registration or provider key was created.
+Post-migration verification: original 4 jobs, all six configuration switches false, zero
+content/render calls, events, media and review grants; all four new tables deny client reads.
+No leftover test/demo schemas. Advisors report INFO only: expected private RLS/no-policy,
+three older unindexed foreign keys and unused indexes on inactive paths. No new warning/error.
+Authenticated local wiring against the live disabled database: video history 200 empty;
+review issuance and reconciliation 503 disabled. Public callback/review routes also 503.
+No owner key was read from Render or exposed. The unrelated local `test.js` edit is preserved.
 
 ## Step 18 implementation and evidence
 
@@ -86,7 +123,7 @@ The live owner-authenticated rendering route was not separately called with the 
 Render credential; local authenticated wiring against the live disabled database passed.
 Post-deploy DB state: 4 jobs, zero render requests/calls, all automation false and zero
 submission allowance/use. No paid provider, storage upload, video, publication or advertising
-was enabled. Step 19 webhook/media-storage work has not started.
+was enabled. Step 19 webhook/media-storage work was subsequently added in mock mode; see above.
 
 ## Step 17 implementation and evidence
 

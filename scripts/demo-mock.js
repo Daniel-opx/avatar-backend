@@ -1,6 +1,6 @@
 // Local simulation only. Never registered in the production Express application.
 require('dotenv').config({ quiet: true });
-const { randomUUID } = require('node:crypto');
+const { randomUUID, randomBytes, createHmac } = require('node:crypto');
 const { readFileSync } = require('node:fs');
 const path = require('node:path');
 const assert = require('node:assert/strict');
@@ -10,6 +10,8 @@ const { createAssetService } = require('../services/assets');
 const { createProcessing } = require('../services/processing');
 const { createRenderService } = require('../services/rendering');
 const { createMockHeyGen } = require('../services/heygen-mock');
+const { createCompletionService } = require('../services/completion');
+const { createMockVideoStore } = require('../test-support/mock-video-store');
 
 async function main() {
   const schema = `mock_demo_${randomUUID().replaceAll('-', '')}`;
@@ -22,7 +24,7 @@ async function main() {
     schemaCreated = true;
     // Structure only; no real topics, scripts, jobs or credentials are copied.
     await pool.query(`CREATE TABLE ${schema}.jobs (LIKE public.jobs INCLUDING ALL)`);
-    for (const migration of ['20261106073647_durable_processing.sql', '20261108184837_versioned_content.sql', '20261108191748_asset_preparation.sql', '20261108193747_render_requests.sql']) {
+    for (const migration of ['20261106073647_durable_processing.sql', '20261108184837_versioned_content.sql', '20261108191748_asset_preparation.sql', '20261108193747_render_requests.sql', '20261108200903_webhook_media.sql']) {
       await query(readFileSync(path.join(__dirname, '../supabase/migrations', migration), 'utf8'));
     }
     await query('UPDATE public.processing_config SET enabled=true');
@@ -30,6 +32,7 @@ async function main() {
       model='mock-only-no-model-call',max_requests=1`);
     await query("UPDATE public.asset_config SET enabled=true,avatar_id='mock-avatar',voice_id='mock-voice'");
     await query('UPDATE public.render_config SET enabled=true,max_submissions=1,poll_after_seconds=5');
+    await query('UPDATE public.completion_config SET enabled=true');
     const jobId = (await query("INSERT INTO public.jobs(topic) VALUES('הדגמה מדומה בלבד') RETURNING id")).rows[0].id;
     const content = createContentService(pool, { schema, liveAllowed: true, providers: {
       // Only this local function is called; no real provider adapter is constructed.
@@ -44,10 +47,10 @@ async function main() {
       } },
     } });
     const assets = createAssetService(pool,{schema,allowPreparation:true});
-    let mockSubmissions=0;
+    let mockSubmissions=0;let callbackId;
     const provider=createMockHeyGen({transport:{mode:'mock',async request(url,options){
-      if(options.method==='POST')mockSubmissions++;
-      return new Response(JSON.stringify({data:{video_id:'mock_demo_video',status:options.method==='POST'?'waiting':'completed'}}));
+      if(options.method==='POST'){mockSubmissions++;callbackId=JSON.parse(options.body).callback_id;}
+      return new Response(JSON.stringify({data:{video_id:'mock_demo_video',callback_id:callbackId,status:options.method==='POST'?'waiting':'completed'}}));
     }}});
     const rendering=createRenderService(pool,{schema,allowMock:true,provider});
     const worker = createProcessing(pool, {
@@ -73,7 +76,16 @@ async function main() {
     assert.equal(mockSubmissions,1);
     const renderHistory=await rendering.history(jobId);
     assert.equal(renderHistory.requests[0].external_video_id,'mock_demo_video');
+    const secret=randomBytes(32).toString('hex');
+    const completion=createCompletionService(pool,{schema,allowMock:true,secret,provider,store:createMockVideoStore()});
+    const raw=Buffer.from(JSON.stringify({event_type:'avatar_video.success',event_data:{video_id:'mock_demo_video',callback_id:callbackId}}));
+    assert.equal((await completion.receive(raw,createHmac('sha256',secret).update(raw).digest('hex'))).status,'accepted');
+    assert.equal((await completion.reconcile(renderHistory.requests[0].id)).status,'ready');
+    const grant=await completion.issueReview(jobId);assert.equal(grant.status,'ready');
+    const review=await completion.readReview(grant.url.split('/').at(-1));assert.equal(review.status,'ready');
     report = { mode: 'MOCK_ONLY', steps, mock_llm_calls: mockCalls,
+      mock_webhook_accepted:true,private_mock_media_retained:true,expiring_review_link_verified:true,
+      review_fixture_bytes:review.bytes.length,playable_video:false,
       mock_render_submissions:mockSubmissions,persisted_mock_video_id:renderHistory.requests[0].external_video_id,
       real_provider_calls: 0, real_video_generated: false, published: false,
       simulated_job_status: job.status, production_configuration_changed: false };

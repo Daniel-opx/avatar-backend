@@ -3,6 +3,7 @@ const { createContentService } = require('./content');
 const { createOpenAI } = require('./llm-provider');
 const { createAssetService } = require('./assets');
 const { createRenderService } = require('./rendering');
+const { createCompletionService } = require('./completion');
 function createPipeline(pool = require('../db/pool'), env = process.env) {
   const liveAllowed = env.CONTENT_LIVE_ENABLED === 'true';
   const providers = {};
@@ -12,7 +13,8 @@ function createPipeline(pool = require('../db/pool'), env = process.env) {
   const assets = createAssetService(pool);
   // Mock transports exist only in tests/demo; credentials cannot enable rendering here.
   const rendering = createRenderService(pool);
-  return { content, assets, rendering, processing: createProcessing(pool,{
+  const completion = createCompletionService(pool);
+  return { content, assets, rendering, completion, processing: createProcessing(pool,{
     content: content.handler, assets: assets.handler, render: rendering.handler }) };
 }
 module.exports = { createPipeline };

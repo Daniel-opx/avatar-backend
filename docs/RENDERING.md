@@ -59,7 +59,8 @@ video IDs must begin `mock_`; they are saved in the journal and never copied int
 Each call uses an eight-second AbortSignal bound inside the worker's ten-second operation
 timeout. Only one short submit/poll operation is awaited per request; no detached renderer
 or long-held HTTP request is required. No callback is registered. Reconciliation overrides,
-authenticated webhooks, media retention and working review links are Step 19 work.
+authenticated webhooks, media retention and protected review are implemented separately
+in Step 19 mock mode; see [COMPLETION.md](COMPLETION.md). Live acceptance remains pending.
 
 ## Database and inspection
 
@@ -91,7 +92,8 @@ Run suites and demo sequentially to fit the existing database connection allowan
 Tests use disposable `step18_test_<uuid>` schemas and mock transports. No real endpoint,
 avatar/account authorization, media generation, cost or provider replay behavior was verified.
 The demo uses the real content, asset and render journal services with controlled providers;
-its persisted `mock_` ID is removed with the disposable schema. No MP4 or review media exists.
+its persisted `mock_` ID is removed with the disposable schema. Step 19 additionally exercises
+retention and protected review with labeled, non-playable mock bytes; see [COMPLETION.md](COMPLETION.md).
 
 Official documentation checked 2026-11-08:
 [Create Video](https://developers.heygen.com/reference/create-video),

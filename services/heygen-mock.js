@@ -62,9 +62,13 @@ function createMockHeyGen({transport}={}){
       throw new RenderError('HEYGEN_INVALID_STATUS',{retryable:true,httpStatus,requestId});
     }
     // Presigned URLs, failure messages and other raw provider fields are not persisted.
+    if(action==='inspect')return {status:data.status,externalId:id,callbackId:data.callback_id??null,
+      durationSeconds:Number.isFinite(data.duration)&&data.duration>=0&&data.duration<=1800?data.duration:null};
     return {status:data.status,httpStatus,requestId};
   }
   return {mode:'mock',submit:args=>request('submit',null,args.payload,args.idempotencyKey,args.signal),
+    inspect:args=>{if(!videoId(args.externalId))throw new RenderError('HEYGEN_INVALID_ID');
+      return request('inspect',args.externalId,null,null,args.signal);},
     poll:args=>{if(!videoId(args.externalId))throw new RenderError('HEYGEN_INVALID_ID');
       return request('poll',args.externalId,null,null,args.signal);}};
 }
