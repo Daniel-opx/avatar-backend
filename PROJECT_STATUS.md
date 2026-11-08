@@ -8,6 +8,7 @@ Original Hebrew architecture document: not found in the repository; requirements
 
 Owner resumed development for Step 16 on 2026-11-08 after the Step 15 pause.
 Owner subsequently authorized **mock-only continuation with no additional spending**.
+Current work: Step 17 asset preparation passed mocked/database checks; real storage/voice/avatar acceptance is deferred.
 Real LLM API account/model/credentials/budget and HeyGen API video credits/rendering budget
 remain outstanding. The ChatGPT membership and HeyGen free web plan are not treated as
 funded backend API access. See [MOCK_DEVELOPMENT.md](docs/MOCK_DEVELOPMENT.md) for the policy
@@ -19,7 +20,7 @@ Last verified database state: 4 jobs, scheduling=false, processing=false, 0 queu
 content_enabled=false, provider/model unset, max_requests=0, 0 content calls/versions,
 0 leftover Step 15/16 test schemas. GitHub workflow remains manual-only. No paid provider
 calls, automatic publication, advertising or unattended processing were enabled.
-Last complete regression suite: 76 passed, zero failures/skips.
+Last complete regression suite: 91 passed, zero failures/skips.
 The preexisting local `test.js` modification is intentionally left uncommitted and unchanged;
 it is not part of the reviewed/deployed application commits.
 
@@ -31,7 +32,7 @@ it is not part of the reviewed/deployed application commits.
 - [x] Step 14: GitHub-hosted health, scoped authentication and repeated post-idle triggers verified; recurring template prepared but intentionally inactive.
 - [x] Step 15: durable processing/lifecycle, attempts, leases, retries and cancellation; disabled by default, real provider adapters remain future work.
 - [ ] Step 16: provider abstraction and versioned Hebrew content implemented/tested; chosen-account live test still pending.
-- [ ] Step 17: protected creative assets and optional voice generation.
+- [ ] Step 17: mock-only asset preparation implemented/tested; live media/avatar/voice acceptance deferred.
 - [ ] Step 18: HeyGen rendering provider and safe submission recovery.
 - [ ] Step 19: authenticated/deduplicated callbacks, storage and reconciliation.
 - [ ] Step 20: resumable generation pipeline ending at human review.
@@ -46,12 +47,39 @@ it is not part of the reviewed/deployed application commits.
 - [ ] Step 29: full acceptance/security testing and authorized live demonstration.
 - [ ] Step 30: operational documentation and separately approved gradual launch.
 
+## Step 17 implementation and evidence
+
+Added private revision-bound media metadata/manifests, avatar/voice configuration, closed
+file/reference policy, storage metadata verification contract, temporary signed-link resolution,
+optional mock TTS and bounded metadata expiry. Default built-in voice needs no separate TTS.
+Manifest/checkpoint/advancement commit atomically with the processing lease. Production
+preparation stays hard-disabled and has no real storage or TTS adapters. Owner-only metadata
+routes added; scheduler key denied. No upload endpoint/bucket or real file deletion introduced.
+The mock demo now uses the Step 17 manifest handler; rendering is still a Step 18 demo stub.
+See [ASSETS.md](docs/ASSETS.md) for policies, limitations, current HeyGen references and tests.
+Initial asset tests: 13 passed using isolated PostgreSQL and controlled adapters.
+Final full regression: `RUN_DB_TESTS=1; npm test` — 91 passed, zero failures/skips.
+An initial overlapping suite/demo run exceeded the existing 15-connection session allowance,
+causing connection errors and knock-on reliability failures. Test files now run sequentially
+while concurrency checks inside each test remain intact. The complete rerun passed with
+no database upgrade; the demo is run afterward. No application pool limit was changed.
+Updated demo passed after the sequential suite: real Step 17 manifest preparation, simulated
+render submission/polling and simulated review. Zero real provider calls/videos/publications;
+disposable schema removed. Syntax/whitespace and renamed migration path checks passed.
+Migration applied through Supabase connector, hosted/local version `20261108191748`.
+Live postcheck: 4 jobs, zero asset records/manifests, scheduling/processing/content/assets all
+false, avatar/voice unset, voice_mode=builtin. Advisors show INFO only for intentionally
+private policy-free tables, inactive indexes and previously documented FK indexing notices;
+no warning/error findings. No real storage or voice resource/credit was purchased.
+
 ## Step 16 implementation and evidence
 
 Mock-only continuation: real LLM acceptance is explicitly deferred, not waived. Added
 `npm run demo:mock`: isolated end-to-end simulation through content, demo assets, demo render
 submission/polling and a simulated review state. It uses controlled functions and removes
-its disposable schema. Asset/render stubs do not complete Steps 17/18 or create a video.
+its disposable schema. The original asset/render stubs did not complete Steps 17/18 or create a video.
+Step 17 subsequently replaces the demo asset stub with the real manifest service; the render
+handler remains a stub and creates no video.
 Executed successfully on 2026-11-08: advanced to assets, advanced to render, saved pending
 render checkpoint, resumed to simulated review; one controlled LLM call, zero real provider
 calls, no video or publication. Disposable schema removed. Syntax/whitespace checks passed.

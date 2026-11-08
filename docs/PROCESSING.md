@@ -8,6 +8,9 @@ Step 15 deployed as `8c708a7`; development resumed for Step 16 on 2026-11-08.
 Processing remains disabled. Step 15 regression suite: 57 passed, zero failures/skips.
 Step 16 adds a gated content handler with an optional adapter; live provider verification
 remains pending. See [CONTENT.md](CONTENT.md).
+Step 17 adds a gated asset handler; production preparation remains hard-disabled and local
+tests/demo inject mock-only dependencies. See [ASSETS.md](ASSETS.md). Asset manifest writes
+share the lease-fenced checkpoint transaction; no video generation is implied.
 
 Job creation and video execution are separate. `jobs.status` retains its existing values.
 Every newly inserted job gets a `job_processing` row in the same transaction, including

@@ -3,6 +3,8 @@
 Current spending policy: mock-only development. Do not enable provider flags, buy credits,
 upgrade HeyGen/Render, or activate automation. Real LLM API access and a HeyGen API video
 budget remain outstanding; see [MOCK_DEVELOPMENT.md](MOCK_DEVELOPMENT.md).
+Step 17 does not provision storage buckets or configure a real TTS adapter. Asset preparation
+remains disabled in the production pipeline; see [ASSETS.md](ASSETS.md).
 
 Status: reviewed application source `697380e` deployed on the existing Render Free service.
 Development resumed for Step 16 on 2026-11-08. Scheduling, processing and content generation
@@ -56,10 +58,14 @@ npm test
 Remove-Item Env:RUN_DB_TESTS
 ```
 
-Database tests create/drop unique `step12_test_<uuid>`, `step15_test_<uuid>` and `step16_test_<uuid>` schemas. They require schema
+Database tests create/drop unique `step12_test_<uuid>`, `step15_test_<uuid>`, `step16_test_<uuid>`
+and `step17_test_<uuid>` schemas. They require schema
 creation permission and a valid CA. They never enable or mutate the live schedule.
 Use the disposable-schema suite instead of `test-step11-live.js` for ongoing regression testing.
 The old Step 11 script temporarily changes live scheduler configuration and retains test jobs.
+Test files run sequentially to fit the existing Supabase session connection limit; concurrency
+within worker/scheduler tests is retained. Run `npm run demo:mock` after database tests finish,
+not alongside them. No database plan upgrade is needed for these checks.
 
 ## Render review and deployment
 

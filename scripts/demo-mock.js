@@ -6,6 +6,7 @@ const path = require('node:path');
 const assert = require('node:assert/strict');
 const pool = require('../db/pool');
 const { createContentService } = require('../services/content');
+const { createAssetService } = require('../services/assets');
 const { createProcessing, PendingStep } = require('../services/processing');
 
 async function main() {
@@ -19,12 +20,13 @@ async function main() {
     schemaCreated = true;
     // Structure only; no real topics, scripts, jobs or credentials are copied.
     await pool.query(`CREATE TABLE ${schema}.jobs (LIKE public.jobs INCLUDING ALL)`);
-    for (const migration of ['20261106073647_durable_processing.sql', '20261108184837_versioned_content.sql']) {
+    for (const migration of ['20261106073647_durable_processing.sql', '20261108184837_versioned_content.sql', '20261108191748_asset_preparation.sql']) {
       await query(readFileSync(path.join(__dirname, '../supabase/migrations', migration), 'utf8'));
     }
     await query('UPDATE public.processing_config SET enabled=true');
     await query(`UPDATE public.content_config SET enabled=true,provider='openai',
       model='mock-only-no-model-call',max_requests=1`);
+    await query("UPDATE public.asset_config SET enabled=true,avatar_id='mock-avatar',voice_id='mock-voice'");
     const jobId = (await query("INSERT INTO public.jobs(topic) VALUES('הדגמה מדומה בלבד') RETURNING id")).rows[0].id;
     const content = createContentService(pool, { schema, liveAllowed: true, providers: {
       // Only this local function is called; no real provider adapter is constructed.
@@ -38,12 +40,13 @@ async function main() {
         } };
       } },
     } });
+    const assets = createAssetService(pool,{schema,allowPreparation:true});
     const worker = createProcessing(pool, {
       content: content.handler,
-      assets: { retrySafe: true, async run() {
-        return { mode: 'mock', avatar_id: 'mock-avatar', voice_id: 'mock-voice', external_tts: false };
-      } },
+      assets: assets.handler,
       render: { retrySafe: true, async run({ progress }) {
+        const prepared=await assets.resolveForRender(jobId,1);
+        assert.equal(prepared.manifest.mode,'mock');
         if (!progress) return new PendingStep({ mode: 'mock', operation_id: 'mock-render' }, 5);
         assert.equal(progress.operation_id, 'mock-render');
         return { mode: 'mock', external_video_id: 'mock-video', video_url: null, real_video_generated: false };

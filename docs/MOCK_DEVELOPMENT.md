@@ -39,7 +39,9 @@ copies table structure without business data, and runs controlled content, asset
 handlers through the real durable engine. Only the disposable configuration is enabled.
 It simulates submission/polling and stops at a simulated human-review state. It creates no
 real video, makes no LLM/HeyGen/TTS requests, publishes nothing, and drops its schema afterward.
-Assets/rendering are demo stubs, not completed Steps 17/18. No sample video file is produced.
+The asset stage now uses Step 17's real metadata/manifest service with simulated configuration;
+the rendering stage remains a stub. No sample video file is produced. Real storage/media,
+avatar permissions and provider generation remain unverified; see [ASSETS.md](ASSETS.md).
 If interrupted, a disposable `mock_demo_<uuid>` schema may need targeted cleanup after its
 ownership/name is verified. Never delete `public` or clean schemas by wildcard.
 
@@ -51,5 +53,8 @@ try { npm test } finally { Remove-Item Env:RUN_DB_TESTS -ErrorAction SilentlyCon
 ```
 
 Record mocked and live evidence separately in [PROJECT_STATUS.md](../PROJECT_STATUS.md).
+Run the database demo and full suite sequentially: isolated schemas still share the existing
+database connection allowance. The test command serializes files while retaining concurrent
+requests inside each reliability test. Do not buy additional database capacity for the demo.
 Step 16's live acceptance remains pending; continue mock preparation without marking it
 live-verified. Steps 17 onward keep their own implementation and acceptance checklist.

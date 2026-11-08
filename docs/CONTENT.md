@@ -68,6 +68,10 @@ provider evaluation. Nothing generated here is approved for publication automati
 
 ## Owner-only API
 
+Step 17 consumes the saved content revision to prepare a private asset manifest. Regeneration
+keeps prior content/assets as history and does not reuse another revision's media references.
+See [ASSETS.md](ASSETS.md); no live storage or TTS provider is activated.
+
 Both routes require the owner `x-api-key`; the scheduler-only key is denied.
 
 - `GET /jobs/{id}/content`: stored versions and sanitized request/usage history.

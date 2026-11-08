@@ -4,6 +4,7 @@ Node.js/Express backend for the AI Avatar automation system, using Supabase Post
 
 Development resumed for Step 16 on 2026-11-08. Steps 1–15 are complete; Step 16's
 content-generation implementation passes database/mocked tests; the provider remains undecided.
+Step 17 asset preparation passes mock/database checks, with external voice disabled by default.
 Latest application source deployed to the existing Render Free service: `697380e`.
 Scheduling and processing remain disabled; GitHub Actions supports manual tests only.
 No generation, publishing, advertising, or paid provider integration is enabled.
@@ -17,8 +18,9 @@ access/budget and HeyGen API video credits/budget are still required before live
 - [Durable processing and test commands](docs/PROCESSING.md)
 - [Hebrew content generation, versions and provider safeguards](docs/CONTENT.md)
 - [Mock-only policy, outstanding account budgets and local demo](docs/MOCK_DEVELOPMENT.md)
+- [Private asset manifests, validation and optional mock voice](docs/ASSETS.md)
 
 Run locally with `npm ci` then `npm start`. Configure credentials privately in `.env`;
 see the deployment guide. Run `npm test` for local checks; opt-in PostgreSQL test
-instructions are in the processing/content guides. Last complete run: 76 passed, zero failures/skips.
+instructions are in the processing/content/asset guides. Last complete run: 91 passed, zero failures/skips.
 Run `npm run demo:mock` for a disposable simulated walkthrough; no real video is generated.

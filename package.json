@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "demo:mock": "node scripts/demo-mock.js",
-    "test": "node --test scheduler.test.js scheduler.integration.test.js security.test.js scheduler-auth.test.js trigger-scheduler.test.js processing.test.js processing.integration.test.js content.test.js content.integration.test.js",
+    "test": "node --test --test-concurrency=1 scheduler.test.js scheduler.integration.test.js security.test.js scheduler-auth.test.js trigger-scheduler.test.js processing.test.js processing.integration.test.js content.test.js content.integration.test.js assets.test.js assets.integration.test.js",
+    "test:assets:db": "node --test assets.integration.test.js",
     "test:content:db": "node --test content.integration.test.js",
     "test:processing:db": "node --test processing.integration.test.js",
     "test:scheduler:db": "node --test scheduler.integration.test.js",

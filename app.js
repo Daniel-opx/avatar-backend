@@ -28,7 +28,7 @@ function createApp({ pool = require('./db/pool'), logger = console.log, rateLimi
     catch { res.status(503).json({ status: 'unavailable' }); }
   });
   const json = express.json({ limit: '32kb' });
-  app.use('/jobs', apiKeyAuth, json, jobsRouter, require('./routes/content')());
+  app.use('/jobs', apiKeyAuth, json, jobsRouter, require('./routes/content')(), require('./routes/assets')());
   app.use('/internal/processing', apiKeyAuth, json, require('./routes/processing')());
   app.use('/internal', apiKeyAuth.scheduler, json, internalRouter);
   app.use((req, res) => res.status(404).json({ error: 'Not found' }));
