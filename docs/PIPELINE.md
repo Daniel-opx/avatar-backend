@@ -65,3 +65,6 @@ Verification on 2026-11-08: focused end-to-end checks 6 passed; full serialized 
 The five-invocation demo passed with zero real calls/publication; all disposable schemas
 were removed. The existing owner-authenticated local trigger returned disabled/200 against
 the live database. Production still had four jobs, all six switches off and zero provider calls.
+Application source `f80eb96` deployed to the existing Render Free service on 2026-11-08.
+Live health/readiness returned 200; anonymous manual processing returned 401; callback/review
+operations returned 503 disabled. No real-account or real-video acceptance is claimed.

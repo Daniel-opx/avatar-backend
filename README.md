@@ -10,7 +10,7 @@ Step 19 adds mock authenticated callbacks, deduplication, retained media metadat
 review links. Production completion remains disabled; real media/account verification is pending.
 Step 20 connects those services through retention to human review. Broader feature work
 pauses after this mock MVP until an approved real script-to-video trial is possible.
-Latest application source deployed to the existing Render Free service: `21665a3`.
+Latest application source deployed to the existing Render Free service: `f80eb96`.
 Scheduling and processing remain disabled; GitHub Actions supports manual tests only.
 No generation, publishing, advertising, or paid provider integration is enabled.
 Current owner decision: continue with mocks only and no additional spending. Real LLM API

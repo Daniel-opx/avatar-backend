@@ -8,7 +8,7 @@ Original Hebrew architecture document: not found in the repository; requirements
 
 Owner resumed development for Step 16 on 2026-11-08 after the Step 15 pause.
 Owner subsequently authorized **mock-only continuation with no additional spending**.
-Current work: Step 20 connects the existing mock stages through retention to human review.
+Current milestone: Step 20 mock flow connected, tested and deployed through retained-media review.
 Owner accepted a smaller MVP: finish this connection, then pause broader feature expansion
 until one real script-to-video trial can be authorized with the required accounts and budget.
 Real LLM API account/model/credentials/budget and HeyGen API video credits/rendering budget
@@ -16,7 +16,7 @@ remain outstanding. The ChatGPT membership and HeyGen free web plan are not trea
 funded backend API access. See [MOCK_DEVELOPMENT.md](docs/MOCK_DEVELOPMENT.md) for the policy
 and repeatable local walkthrough. No real provider activation or plan upgrade is authorized.
 Step 16 code and database tests passed; AI provider remains undecided and live verification is pending.
-Latest application deployment: `21665a3` on the existing Render Free service; subsequent
+Latest application deployment: `f80eb96` on the existing Render Free service; subsequent
 commits update documentation only and do not require redeploying the application.
 Last verified database state: 4 jobs, scheduling=false, processing=false, 0 queued jobs,
 content_enabled=false, assets_enabled=false, render_enabled=false, completion_enabled=false, provider/model unset,
@@ -67,6 +67,12 @@ one mock video submission, retained fixture/review grant verified, zero real cal
 Post-run production verification: original 4 jobs, all six switches false, zero provider calls,
 media/events/grants and leftover test/demo schemas. Owner-authenticated local manual trigger
 against the live database returned HTTP 200 disabled. No `.env`, migration or provider change.
+Implementation `f80eb96` deployed manually to Render Free as `dep-dbodp0hsrm7s73bmc03g`
+on 2026-11-08 at 22:33 Asia/Jerusalem. Live health/readiness returned 200, anonymous manual
+processing returned 401, callback/review operations returned 503 disabled. No Render owner
+credential was retrieved or provider activated. Deployment screenshot: `step20-render-live.png`
+in the session visualization directory. Documentation synced separately after deployment.
+Broader features are now deferred at the agreed MVP checkpoint; real-account acceptance remains pending.
 
 ## Step 19 implementation and evidence
 
@@ -481,6 +487,6 @@ Reviewed build/runtime logs showed safe structured messages, no visible credenti
 - Rate limiting is per process and resets after restart; Render uses a conservative shared cap.
   Heavy unauthenticated traffic can consume the shared budget; this is not a distributed WAF.
 - Current shared key is temporary; team identities are Step 21.
-- Latest deployed source `21665a3`; unrelated preexisting `test.js` edit preserved unstaged.
+- Latest deployed source `f80eb96`; unrelated preexisting `test.js` edit preserved unstaged.
 - Step 16 has a hosted migration ledger entry; earlier DDL is untracked. Reconcile the baseline before using a general migration runner.
 - See `docs/DEPLOYMENT.md` for test commands, rotation sequence and migration recovery.

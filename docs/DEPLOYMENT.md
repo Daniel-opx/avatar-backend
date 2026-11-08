@@ -13,10 +13,11 @@ return disabled until a separate implementation/authorization for real accounts.
 Step 20 reuses the existing manual processing trigger and schema; composed rendering now
 requires retained media before human review. No new configuration, provider key or migration.
 
-Status: reviewed application source `21665a3` deployed on the existing Render Free service.
-Step 19 mock callback/retention/review is implemented. Scheduling, processing, content, assets,
-rendering and completion remain disabled. Deployment `dep-dbodep15efls73di9ll0` succeeded on
-2026-11-08 at 22:11 Asia/Jerusalem; live health/readiness returned
+Status: reviewed application source `f80eb96` deployed on the existing Render Free service.
+Steps 19–20 mock callback/retention/review and shared workflow are implemented. Scheduling,
+processing, content, assets, rendering and completion remain disabled.
+Deployment `dep-dbodp0hsrm7s73bmc03g` succeeded on 2026-11-08 at 22:33 Asia/Jerusalem;
+live health/readiness returned
 200. Authenticated processing was checked locally against the live database (200 disabled);
 the production owner-authenticated processing route has not been separately exercised.
 New content retrieval/regeneration routes reject unauthenticated requests (401); their owner
@@ -31,6 +32,10 @@ returned 200 empty; reconciliation and review issuance returned disabled/503. Fu
 passed 131 tests; final focused checks passed 19 tests; the updated mock walkthrough passed.
 All new tables are private with RLS and denied client reads. The live database still has
 4 jobs and zero events/media/grants/provider calls. No real storage or account was activated.
+Step 20 regression: 139 passed, zero failures/skips; five-invocation mock demo passed. No new
+migration or endpoint. Local owner-authenticated manual processing returned disabled/200;
+deployed anonymous manual processing returned 401. Broader roadmap expansion is deferred
+until an approved real script-to-video trial; production flags remain off.
 Live at https://avatar-backend-65ep.onrender.com. Unattended automation is NOT authorized.
 HTTPS health/readiness passed; missing/old keys rejected. Owner-run fresh-key `GET /jobs`
 returned 200 on 2026-11-06. Build/start/health settings aligned; rebuild and restart recovery passed.
