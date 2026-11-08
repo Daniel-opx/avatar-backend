@@ -14,11 +14,11 @@ remain outstanding. The ChatGPT membership and HeyGen free web plan are not trea
 funded backend API access. See [MOCK_DEVELOPMENT.md](docs/MOCK_DEVELOPMENT.md) for the policy
 and repeatable local walkthrough. No real provider activation or plan upgrade is authorized.
 Step 16 code and database tests passed; AI provider remains undecided and live verification is pending.
-Latest application deployment: `697380e` on the existing Render Free service; subsequent
+Latest application deployment: `d53aa9a` on the existing Render Free service; subsequent
 commits update documentation only and do not require redeploying the application.
 Last verified database state: 4 jobs, scheduling=false, processing=false, 0 queued jobs,
-content_enabled=false, provider/model unset, max_requests=0, 0 content calls/versions,
-0 leftover Step 15/16 test schemas. GitHub workflow remains manual-only. No paid provider
+content_enabled=false, assets_enabled=false, provider/model unset, max_requests=0,
+0 content calls/versions/assets/manifests, no leftover test/demo schemas. GitHub workflow remains manual-only. No paid provider
 calls, automatic publication, advertising or unattended processing were enabled.
 Last complete regression suite: 91 passed, zero failures/skips.
 The preexisting local `test.js` modification is intentionally left uncommitted and unchanged;
@@ -71,6 +71,16 @@ Live postcheck: 4 jobs, zero asset records/manifests, scheduling/processing/cont
 false, avatar/voice unset, voice_mode=builtin. Advisors show INFO only for intentionally
 private policy-free tables, inactive indexes and previously documented FK indexing notices;
 no warning/error findings. No real storage or voice resource/credit was purchased.
+Live catalog check confirmed all three asset tables have RLS and deny anon/authenticated
+SELECT. Leftover Step 17/demo schemas: 0. Authenticated local HTTP smoke test against the
+live disabled database: assets GET 200 empty, registration POST 409 unconfigured.
+Source `d53aa9a` committed/pushed and deployed to Render Free as
+`dep-dbocmktg1s2s73eqpivg`, **Deploy succeeded | Live**, 2026-11-08 21:19 Asia/Jerusalem.
+Live HTTPS: health/readiness 200, unauthenticated asset GET/POST 401. Live owner-authenticated
+asset routes were not exercised using the rotated Render credential; local authenticated
+wiring with the live disabled database was verified above. Final DB check: 4 jobs, zero
+content calls/assets/manifests, all scheduling/processing/content/asset flags false.
+No plan upgrade, paid provider request, upload, publication or advertising enabled.
 
 ## Step 16 implementation and evidence
 
@@ -119,7 +129,8 @@ Build `npm ci` reported zero vulnerabilities. HTTPS checks after rollout: health
 content call was performed using the rotated Render key; authenticated wiring was tested
 locally against the live disabled database. Post-deploy database state is unchanged:
 4 jobs, zero content calls/versions, all automation disabled, no provider/model/request allowance.
-No paid resource, live LLM test, publication or advertising was enabled. Step 17 not started.
+No paid resource, live LLM test, publication or advertising was enabled. At that checkpoint,
+Step 17 had not started; its later mock implementation is recorded above.
 
 ## Step 15 implementation and evidence
 
@@ -363,6 +374,6 @@ Reviewed build/runtime logs showed safe structured messages, no visible credenti
 - Rate limiting is per process and resets after restart; Render uses a conservative shared cap.
   Heavy unauthenticated traffic can consume the shared budget; this is not a distributed WAF.
 - Current shared key is temporary; team identities are Step 21.
-- Latest deployed source `697380e`; unrelated preexisting `test.js` edit preserved unstaged.
+- Latest deployed source `d53aa9a`; unrelated preexisting `test.js` edit preserved unstaged.
 - Step 16 has a hosted migration ledger entry; earlier DDL is untracked. Reconcile the baseline before using a general migration runner.
 - See `docs/DEPLOYMENT.md` for test commands, rotation sequence and migration recovery.

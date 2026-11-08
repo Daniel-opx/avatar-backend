@@ -1,5 +1,9 @@
 # Step 17 — asset preparation (mock-only)
 
+Implemented/tested and deployed as `d53aa9a` on Render Free, 2026-11-08. Final regression:
+91 passed, zero failures/skips; updated mock demo passed. Live health/readiness 200 and
+unauthenticated asset routes 401. Live account/storage/avatar/voice verification is pending.
+
 Continues the owner's mock-only/no-additional-spending policy. Real LLM API access/budget,
 HeyGen API video credits/budget, avatar/voice permissions and live media verification remain
 outstanding. No HeyGen, storage or voice account was activated, no bucket created, no object
