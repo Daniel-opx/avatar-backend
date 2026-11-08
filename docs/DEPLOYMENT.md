@@ -8,15 +8,17 @@ remains disabled in the production pipeline; see [ASSETS.md](ASSETS.md).
 Step 18 similarly does not register a live HeyGen transport or accept real HeyGen credentials.
 Rendering remains disabled; no API flag or provider secret alone can activate this mock adapter.
 
-Status: reviewed application source `d53aa9a` deployed on the existing Render Free service.
-Step 17 mock preparation is implemented. Scheduling, processing, content and asset preparation
-remain disabled. Deployment `dep-dbocmktg1s2s73eqpivg` succeeded on 2026-11-08; live health/readiness returned
+Status: reviewed application source `b0aa3ff` deployed on the existing Render Free service.
+Step 18 mock rendering is implemented. Scheduling, processing, content, assets and rendering
+remain disabled. Deployment `dep-dbod04bm8hqs7387k500` succeeded on 2026-11-08; live health/readiness returned
 200. Authenticated processing was checked locally against the live database (200 disabled);
 the production owner-authenticated processing route has not been separately exercised.
 New content retrieval/regeneration routes reject unauthenticated requests (401); their owner
 authentication was exercised locally. Live provider-account verification remains pending.
 Asset GET/POST likewise reject unauthenticated requests (401); authenticated local wiring
 against the live disabled database returned GET 200 and registration 409 unconfigured.
+Rendering-history GET rejects unauthenticated requests (401); authenticated local wiring
+returned 200 with an empty journal. No real provider integration or media was verified.
 Live at https://avatar-backend-65ep.onrender.com. Unattended automation is NOT authorized.
 HTTPS health/readiness passed; missing/old keys rejected. Owner-run fresh-key `GET /jobs`
 returned 200 on 2026-11-06. Build/start/health settings aligned; rebuild and restart recovery passed.

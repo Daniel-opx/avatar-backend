@@ -14,11 +14,12 @@ remain outstanding. The ChatGPT membership and HeyGen free web plan are not trea
 funded backend API access. See [MOCK_DEVELOPMENT.md](docs/MOCK_DEVELOPMENT.md) for the policy
 and repeatable local walkthrough. No real provider activation or plan upgrade is authorized.
 Step 16 code and database tests passed; AI provider remains undecided and live verification is pending.
-Latest application deployment: `d53aa9a` on the existing Render Free service; subsequent
+Latest application deployment: `b0aa3ff` on the existing Render Free service; subsequent
 commits update documentation only and do not require redeploying the application.
 Last verified database state: 4 jobs, scheduling=false, processing=false, 0 queued jobs,
-content_enabled=false, assets_enabled=false, provider/model unset, max_requests=0,
-0 content calls/versions/assets/manifests, no leftover test/demo schemas. GitHub workflow remains manual-only. No paid provider
+content_enabled=false, assets_enabled=false, render_enabled=false, provider/model unset,
+max_requests=0, max_submissions=0, submissions_used=0, zero content/render calls and generated
+versions/assets/manifests/requests, no leftover test/demo schemas. GitHub workflow remains manual-only. No paid provider
 calls, automatic publication, advertising or unattended processing were enabled.
 Last complete regression suite: 114 passed, zero failures/skips.
 The preexisting local `test.js` modification is intentionally left uncommitted and unchanged;
@@ -75,7 +76,17 @@ assets/rendering all false, mode=mock, max_submissions=0, submissions_used=0.
 All three render tables have RLS and deny anon/authenticated SELECT. Disposable Step 18/demo
 schemas remaining: 0. Advisor results: INFO only for intentionally private policy-free tables,
 inactive indexes and previously recorded FK notices; no warning/error findings.
-Syntax, whitespace and aligned migration-path checks passed. Deployment evidence pending.
+Syntax, whitespace and aligned migration-path checks passed.
+Authenticated local rendering-history smoke test against the live disabled database returned
+200 with no requests/calls. No rotated Render credential was retrieved. Source committed/
+pushed as `b0aa3ff`, deployed on the existing Render Free service as
+`dep-dbod04bm8hqs7387k500`, **Deploy succeeded | Live**, 2026-11-08 21:40 Asia/Jerusalem.
+Live HTTPS health/readiness returned 200; unauthenticated rendering-history GET returned 401.
+The live owner-authenticated rendering route was not separately called with the rotated
+Render credential; local authenticated wiring against the live disabled database passed.
+Post-deploy DB state: 4 jobs, zero render requests/calls, all automation false and zero
+submission allowance/use. No paid provider, storage upload, video, publication or advertising
+was enabled. Step 19 webhook/media-storage work has not started.
 
 ## Step 17 implementation and evidence
 
@@ -85,7 +96,8 @@ optional mock TTS and bounded metadata expiry. Default built-in voice needs no s
 Manifest/checkpoint/advancement commit atomically with the processing lease. Production
 preparation stays hard-disabled and has no real storage or TTS adapters. Owner-only metadata
 routes added; scheduler key denied. No upload endpoint/bucket or real file deletion introduced.
-The mock demo now uses the Step 17 manifest handler; rendering is still a Step 18 demo stub.
+At the Step 17 checkpoint, the demo used its manifest handler while rendering remained a
+stub. Step 18's later journal/adapter implementation is recorded above.
 See [ASSETS.md](docs/ASSETS.md) for policies, limitations, current HeyGen references and tests.
 Initial asset tests: 13 passed using isolated PostgreSQL and controlled adapters.
 Final full regression: `RUN_DB_TESTS=1; npm test` — 91 passed, zero failures/skips.
@@ -119,7 +131,8 @@ Mock-only continuation: real LLM acceptance is explicitly deferred, not waived. 
 submission/polling and a simulated review state. It uses controlled functions and removes
 its disposable schema. The original asset/render stubs did not complete Steps 17/18 or create a video.
 Step 17 subsequently replaces the demo asset stub with the real manifest service; the render
-handler remains a stub and creates no video.
+handler at that checkpoint remained a stub. Step 18 later replaces it with the journal/
+mock transport adapter; it still creates no real video.
 Executed successfully on 2026-11-08: advanced to assets, advanced to render, saved pending
 render checkpoint, resumed to simulated review; one controlled LLM call, zero real provider
 calls, no video or publication. Disposable schema removed. Syntax/whitespace checks passed.
@@ -404,6 +417,6 @@ Reviewed build/runtime logs showed safe structured messages, no visible credenti
 - Rate limiting is per process and resets after restart; Render uses a conservative shared cap.
   Heavy unauthenticated traffic can consume the shared budget; this is not a distributed WAF.
 - Current shared key is temporary; team identities are Step 21.
-- Latest deployed source `d53aa9a`; unrelated preexisting `test.js` edit preserved unstaged.
+- Latest deployed source `b0aa3ff`; unrelated preexisting `test.js` edit preserved unstaged.
 - Step 16 has a hosted migration ledger entry; earlier DDL is untracked. Reconcile the baseline before using a general migration runner.
 - See `docs/DEPLOYMENT.md` for test commands, rotation sequence and migration recovery.

@@ -1,5 +1,9 @@
 # Step 18 — HeyGen rendering (mock-only)
 
+Source `b0aa3ff` deployed to Render Free on 2026-11-08. Final regression: 114 passed,
+zero failures/skips; updated mock demo passed. Live health/readiness 200; unauthenticated
+rendering-history GET 401. Rendering is disabled and the live journal is empty.
+
 Implements a durable render journal and an adapter modeled on the current HeyGen v3
 contract. Every transport is explicitly injected with `mode: mock`; there is no default
 HTTP client and no real API key accepted by this adapter. The production pipeline creates

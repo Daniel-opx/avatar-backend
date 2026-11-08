@@ -6,7 +6,7 @@ Development resumed for Step 16 on 2026-11-08. Steps 1–15 are complete; Step 1
 content-generation implementation passes database/mocked tests; the provider remains undecided.
 Step 17 asset preparation passes mock/database checks, with external voice disabled by default.
 Step 18 mock rendering has a tested durable submission/poll journal; live verification is deferred.
-Latest application source deployed to the existing Render Free service: `d53aa9a`.
+Latest application source deployed to the existing Render Free service: `b0aa3ff`.
 Scheduling and processing remain disabled; GitHub Actions supports manual tests only.
 No generation, publishing, advertising, or paid provider integration is enabled.
 Current owner decision: continue with mocks only and no additional spending. Real LLM API
