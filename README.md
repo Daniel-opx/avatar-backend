@@ -7,6 +7,8 @@ content-generation implementation passes database/mocked tests; the provider rem
 Latest application source deployed to the existing Render Free service: `697380e`.
 Scheduling and processing remain disabled; GitHub Actions supports manual tests only.
 No generation, publishing, advertising, or paid provider integration is enabled.
+Current owner decision: continue with mocks only and no additional spending. Real LLM API
+access/budget and HeyGen API video credits/budget are still required before live automation.
 
 - [Project status and verification evidence](PROJECT_STATUS.md)
 - [Full development roadmap](docs/DEVELOPMENT_ROADMAP.md)
@@ -14,7 +16,9 @@ No generation, publishing, advertising, or paid provider integration is enabled.
 - [External scheduler](docs/EXTERNAL_CRON.md)
 - [Durable processing and test commands](docs/PROCESSING.md)
 - [Hebrew content generation, versions and provider safeguards](docs/CONTENT.md)
+- [Mock-only policy, outstanding account budgets and local demo](docs/MOCK_DEVELOPMENT.md)
 
 Run locally with `npm ci` then `npm start`. Configure credentials privately in `.env`;
 see the deployment guide. Run `npm test` for local checks; opt-in PostgreSQL test
 instructions are in the processing/content guides. Last complete run: 76 passed, zero failures/skips.
+Run `npm run demo:mock` for a disposable simulated walkthrough; no real video is generated.

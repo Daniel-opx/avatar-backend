@@ -1,5 +1,9 @@
 # Durable processing (Step 15)
 
+Development continues in mock-only mode. The local demo's content/assets/render handlers
+are simulations, not live provider verification. Production remains disabled; real LLM
+and HeyGen API funding/credentials are still needed. See [MOCK_DEVELOPMENT.md](MOCK_DEVELOPMENT.md).
+
 Step 15 deployed as `8c708a7`; development resumed for Step 16 on 2026-11-08.
 Processing remains disabled. Step 15 regression suite: 57 passed, zero failures/skips.
 Step 16 adds a gated content handler with an optional adapter; live provider verification

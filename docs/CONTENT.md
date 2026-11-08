@@ -1,5 +1,9 @@
 # Step 16 — Hebrew content generation
 
+Owner decision: continue with mocks only. A real LLM API account, private credentials and
+approved test budget remain required; the ChatGPT membership is not counted as API funding.
+See [MOCK_DEVELOPMENT.md](MOCK_DEVELOPMENT.md). No live acceptance is implied by the local demo.
+
 Provider-neutral content service with an optional OpenAI Responses adapter. The owner has
 not selected a provider/model or authorized a live test budget. Tests use controlled
 provider responses; no live LLM generation has been verified. No default model or pricing

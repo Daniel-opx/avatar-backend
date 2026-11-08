@@ -1,5 +1,9 @@
 # Deployment and recovery
 
+Current spending policy: mock-only development. Do not enable provider flags, buy credits,
+upgrade HeyGen/Render, or activate automation. Real LLM API access and a HeyGen API video
+budget remain outstanding; see [MOCK_DEVELOPMENT.md](MOCK_DEVELOPMENT.md).
+
 Status: reviewed application source `697380e` deployed on the existing Render Free service.
 Development resumed for Step 16 on 2026-11-08. Scheduling, processing and content generation
 remain disabled. Deployment `dep-dboc9ebm8hqs7385k24g` succeeded on 2026-11-08; live health/readiness returned

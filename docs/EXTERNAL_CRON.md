@@ -1,5 +1,8 @@
 # Step 14 — external free Cron (recurring execution inactive)
 
+Owner authorized mock-only continuation, not recurring activation or provider spending.
+Real LLM/HeyGen API access and budgets remain pending; see [MOCK_DEVELOPMENT.md](MOCK_DEVELOPMENT.md).
+
 Current handoff: development resumed for Step 16 on 2026-11-08. Manual GitHub tests are
 verified; recurring runs remain unconfigured, and database scheduling/processing remain
 disabled. Latest overall regression suite: 76 passed, zero failures/skips.

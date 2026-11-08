@@ -7,6 +7,11 @@ Original Hebrew architecture document: not found in the repository; requirements
 ## Current handoff — 2026-11-08
 
 Owner resumed development for Step 16 on 2026-11-08 after the Step 15 pause.
+Owner subsequently authorized **mock-only continuation with no additional spending**.
+Real LLM API account/model/credentials/budget and HeyGen API video credits/rendering budget
+remain outstanding. The ChatGPT membership and HeyGen free web plan are not treated as
+funded backend API access. See [MOCK_DEVELOPMENT.md](docs/MOCK_DEVELOPMENT.md) for the policy
+and repeatable local walkthrough. No real provider activation or plan upgrade is authorized.
 Step 16 code and database tests passed; AI provider remains undecided and live verification is pending.
 Latest application deployment: `697380e` on the existing Render Free service; subsequent
 commits update documentation only and do not require redeploying the application.
@@ -42,6 +47,14 @@ it is not part of the reviewed/deployed application commits.
 - [ ] Step 30: operational documentation and separately approved gradual launch.
 
 ## Step 16 implementation and evidence
+
+Mock-only continuation: real LLM acceptance is explicitly deferred, not waived. Added
+`npm run demo:mock`: isolated end-to-end simulation through content, demo assets, demo render
+submission/polling and a simulated review state. It uses controlled functions and removes
+its disposable schema. Asset/render stubs do not complete Steps 17/18 or create a video.
+Executed successfully on 2026-11-08: advanced to assets, advanced to render, saved pending
+render checkpoint, resumed to simulated review; one controlled LLM call, zero real provider
+calls, no video or publication. Disposable schema removed. Syntax/whitespace checks passed.
 
 Added provider-neutral generation service, optional OpenAI Responses adapter, closed Hebrew
 content schema, versioned database prompts/packages, durable request/call journal, usage and

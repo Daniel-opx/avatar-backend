@@ -1,5 +1,11 @@
 # MASTER DEVELOPMENT INSTRUCTIONS — AI Avatar Automation System
 
+Execution update from owner, 2026-11-08: continue in **mock-only mode**, with no additional
+provider spending. Real LLM API account/model/credentials/budget and funded HeyGen API video
+access remain prerequisites for live acceptance. Keep those tests pending and label mocks
+clearly; do not activate automation, upgrade plans or purchase credits. See
+[mock development policy](MOCK_DEVELOPMENT.md) and [current checklist](../PROJECT_STATUS.md).
+
 ## Your role
 
 You are the lead software engineer responsible for completing an existing AI Avatar marketing automation platform.
