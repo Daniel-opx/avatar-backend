@@ -7,7 +7,7 @@ const assert = require('node:assert/strict');
 const pool = require('../db/pool');
 const { createContentService } = require('../services/content');
 const { createAssetService } = require('../services/assets');
-const { createProcessing } = require('../services/processing');
+const { composePipeline } = require('../services/pipeline');
 const { createRenderService } = require('../services/rendering');
 const { createMockHeyGen } = require('../services/heygen-mock');
 const { createCompletionService } = require('../services/completion');
@@ -53,11 +53,9 @@ async function main() {
       return new Response(JSON.stringify({data:{video_id:'mock_demo_video',callback_id:callbackId,status:options.method==='POST'?'waiting':'completed'}}));
     }}});
     const rendering=createRenderService(pool,{schema,allowMock:true,provider});
-    const worker = createProcessing(pool, {
-      content: content.handler,
-      assets: assets.handler,
-      render: rendering.handler,
-    }, schema);
+    const secret=randomBytes(32).toString('hex');
+    const completion=createCompletionService(pool,{schema,allowMock:true,secret,provider,store:createMockVideoStore()});
+    const worker=composePipeline(pool,{content,assets,rendering,completion},{schema}).processing;
     const steps = [];
     for (let i = 0; i < 3; i++) steps.push(await worker.runOne());
     assert.equal(steps.at(-1).status, 'waiting');
@@ -65,7 +63,14 @@ async function main() {
     await query('UPDATE public.job_processing SET next_attempt_at=clock_timestamp() WHERE job_id=$1', [jobId]);
     await query('UPDATE public.render_requests SET next_action_at=clock_timestamp() WHERE job_id=$1',[jobId]);
     steps.push(await worker.runOne());
-    assert.equal(steps.at(-1).status, 'succeeded');
+    assert.equal(steps.at(-1).status, 'waiting');
+    assert.equal((await query('SELECT status FROM public.jobs WHERE id=$1',[jobId])).rows[0].status,'rendering');
+    assert.equal((await completion.issueReview(jobId)).status,'unavailable');
+    const raw=Buffer.from(JSON.stringify({event_type:'avatar_video.success',event_data:{video_id:'mock_demo_video',callback_id:callbackId}}));
+    assert.equal((await completion.receive(raw,createHmac('sha256',secret).update(raw).digest('hex'))).status,'accepted');
+    await query('UPDATE public.job_processing SET next_attempt_at=clock_timestamp() WHERE job_id=$1',[jobId]);
+    steps.push(await worker.runOne());
+    assert.equal(steps.at(-1).status,'succeeded');
     const history = await content.history(jobId);
     const job = (await query('SELECT status,heygen_video_id,ghl_post_id FROM public.jobs WHERE id=$1', [jobId])).rows[0];
     assert.equal(mockCalls, 1);
@@ -76,11 +81,6 @@ async function main() {
     assert.equal(mockSubmissions,1);
     const renderHistory=await rendering.history(jobId);
     assert.equal(renderHistory.requests[0].external_video_id,'mock_demo_video');
-    const secret=randomBytes(32).toString('hex');
-    const completion=createCompletionService(pool,{schema,allowMock:true,secret,provider,store:createMockVideoStore()});
-    const raw=Buffer.from(JSON.stringify({event_type:'avatar_video.success',event_data:{video_id:'mock_demo_video',callback_id:callbackId}}));
-    assert.equal((await completion.receive(raw,createHmac('sha256',secret).update(raw).digest('hex'))).status,'accepted');
-    assert.equal((await completion.reconcile(renderHistory.requests[0].id)).status,'ready');
     const grant=await completion.issueReview(jobId);assert.equal(grant.status,'ready');
     const review=await completion.readReview(grant.url.split('/').at(-1));assert.equal(review.status,'ready');
     report = { mode: 'MOCK_ONLY', steps, mock_llm_calls: mockCalls,

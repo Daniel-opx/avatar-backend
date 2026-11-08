@@ -101,7 +101,7 @@ function createCompletionService(pool,{schema='public',allowMock=false,secret=nu
       if(state==='ready'){
         await run(`UPDATE public.webhook_events SET render_request_id=$2,state=CASE WHEN event_type='avatar_video.fail'
           THEN 'ignored' ELSE 'processed' END WHERE external_video_id=$1 AND state IN ('received','unmatched')`,[work.externalId,work.id]);
-        if(job.stage==='render'&&['draft','rendering','failed'].includes(job.job_status)){
+        if(work.promote!==false&&job.stage==='render'&&['draft','rendering','failed'].includes(job.job_status)){
           await run(`UPDATE public.job_attempts SET outcome='succeeded',finished_at=clock_timestamp()
             WHERE job_id=$1 AND stage='render' AND outcome='running'`,[job.job_id]);
           await run(`INSERT INTO public.job_checkpoints AS cp(job_id,stage,output,completed) VALUES($1,'render',$2,true)
@@ -117,9 +117,10 @@ function createCompletionService(pool,{schema='public',allowMock=false,secret=nu
       return {status:state,mode:'mock',real_video_generated:false};
     });
   }
-  async function reconcile(id,{signal:outerSignal}={}){
+  async function reconcile(id,{signal:outerSignal,promote=true}={}){
     if(!allowMock||provider?.mode!=='mock'||store?.mode!=='mock')return {status:'disabled'};
     const work=await reserve(id);if(work.status!=='reserved')return work;
+    work.promote=promote;
     const signal=outerSignal?AbortSignal.any([outerSignal,AbortSignal.timeout(8000)]):AbortSignal.timeout(8000);
     let detail;
     try{detail=await provider.inspect({externalId:work.externalId,signal});}
@@ -231,6 +232,11 @@ function createCompletionService(pool,{schema='public',allowMock=false,secret=nu
         ON r.id=e.render_request_id WHERE r.job_id=$1 ORDER BY e.received_at`,[jobId]),
     ]);return {media:media.rows,events:events.rows};
   }
-  return {receive,reconcile,issueReview,readReview,retryMedia,history};
+  async function isAvailable(run){
+    if(!allowMock||provider?.mode!=='mock'||store?.mode!=='mock')return false;
+    const cfg=(await run('SELECT enabled FROM public.completion_config WHERE id=1')).rows[0];
+    return Boolean(cfg?.enabled);
+  }
+  return {receive,reconcile,issueReview,readReview,retryMedia,history,isAvailable};
 }
 module.exports={createCompletionService};

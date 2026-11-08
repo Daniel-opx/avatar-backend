@@ -8,8 +8,9 @@ Original Hebrew architecture document: not found in the repository; requirements
 
 Owner resumed development for Step 16 on 2026-11-08 after the Step 15 pause.
 Owner subsequently authorized **mock-only continuation with no additional spending**.
-Current work: Step 19 mock callback authentication, deduplication, retention and protected
-review passed database/controlled-provider checks; live provider acceptance remains deferred.
+Current work: Step 20 connects the existing mock stages through retention to human review.
+Owner accepted a smaller MVP: finish this connection, then pause broader feature expansion
+until one real script-to-video trial can be authorized with the required accounts and budget.
 Real LLM API account/model/credentials/budget and HeyGen API video credits/rendering budget
 remain outstanding. The ChatGPT membership and HeyGen free web plan are not treated as
 funded backend API access. See [MOCK_DEVELOPMENT.md](docs/MOCK_DEVELOPMENT.md) for the policy
@@ -22,8 +23,7 @@ content_enabled=false, assets_enabled=false, render_enabled=false, completion_en
 max_requests=0, max_submissions=0, submissions_used=0, zero content/render calls and generated
 versions/assets/manifests/requests, no leftover test/demo schemas. GitHub workflow remains manual-only. No paid provider
 calls, automatic publication, advertising or unattended processing were enabled.
-Last complete regression suite: 131 passed, zero failures/skips. Final Step 19-focused
-verification is recorded separately below because it includes subsequent recovery checks.
+Last complete regression suite: 139 passed, zero failures/skips (Step 20).
 The preexisting local `test.js` modification is intentionally left uncommitted and unchanged;
 it is not part of the reviewed/deployed application commits.
 
@@ -38,7 +38,7 @@ it is not part of the reviewed/deployed application commits.
 - [ ] Step 17: mock-only asset preparation implemented/tested; live media/avatar/voice acceptance deferred.
 - [ ] Step 18: mock HeyGen v3 adapter and durable submit/poll journal implemented/tested; live test deferred.
 - [ ] Step 19: mock authenticated/deduplicated callbacks, private fixture retention and review implemented; live acceptance pending.
-- [ ] Step 20: resumable generation pipeline ending at human review.
+- [ ] Step 20: small mock workflow connected/tested through retained-media review; live acceptance pending.
 - [ ] Step 21: team identities, roles and separate internal service authentication.
 - [ ] Step 22: auditable approvals tied to exact content versions.
 - [ ] Step 23: authenticated team dashboard with Hebrew/RTL support.
@@ -49,6 +49,24 @@ it is not part of the reviewed/deployed application commits.
 - [ ] Step 28: durable audit, monitoring and alerts.
 - [ ] Step 29: full acceptance/security testing and authorized live demonstration.
 - [ ] Step 30: operational documentation and separately approved gradual launch.
+
+## Step 20 implementation and evidence
+
+Reused existing services, tables and manual processing trigger; no new migration, endpoint,
+dashboard or infrastructure. Shared composition now checkpoints completed renders before
+retention, and checks retained media inside final worker completion before `ready_for_review`.
+The demo uses this same composition. Production stays disabled; real LLM/HeyGen/storage
+verification remains pending. See [PIPELINE.md](docs/PIPELINE.md).
+Focused end-to-end checks: 6 passed with real isolated PostgreSQL and mock providers.
+Confirmed one generated content package/submission/retained fixture under overlapping workers,
+no review before retention, storage recovery and final-checkpoint rollback recovery without
+repeating earlier stages. Disabled retention prevents submission; cancellation stops later work.
+Full serialized regression suite: 139 passed, zero failures/skips (476.8 seconds).
+Updated mock demo passed through five worker invocations, with one mock content call and
+one mock video submission, retained fixture/review grant verified, zero real calls/publication.
+Post-run production verification: original 4 jobs, all six switches false, zero provider calls,
+media/events/grants and leftover test/demo schemas. Owner-authenticated local manual trigger
+against the live database returned HTTP 200 disabled. No `.env`, migration or provider change.
 
 ## Step 19 implementation and evidence
 
@@ -64,9 +82,9 @@ access these owner routes. All four new tables are private/RLS-enabled.
 No real callback registration, provider secret, media download, storage bucket or paid call.
 Production completion is hard-disabled and its database configuration defaults false.
 Fixture bytes are labeled mock, in-memory and not playable video. Real durable storage,
-provider/account-backed authenticity and output remain unverified. Step 20 pipeline composition
-is not started; standalone Step 18 completion can precede retention, while review links always
-require retained media. See [COMPLETION.md](docs/COMPLETION.md).
+provider/account-backed authenticity and output remain unverified. Standalone Step 18 completion
+can precede retention; Step 20 subsequently added a shared pipeline gate before worker review.
+Review links always require retained media. See [COMPLETION.md](docs/COMPLETION.md).
 
 Initial focused checks: 15 passed. Full serialized regression: 131 passed, zero failures/skips
 (373.9 seconds). Final Step 19 checks after recovery/constraint refinements: 19 passed,
@@ -91,7 +109,8 @@ database readiness returned 200; anonymous video-history/reconciliation requests
 routes were verified locally against the live database, not with Render's rotated owner key.
 No automatic scheduler/processing, paid resource, real provider/storage call or publishing
 was enabled. Deployment proof saved as `step19-render-live.png` in the session visualization
-directory. Follow-up commits update documentation only; Step 20 has not started.
+directory. The Step 19 follow-up commit updated documentation only; subsequent Step 20 work
+is recorded above.
 
 ## Step 18 implementation and evidence
 

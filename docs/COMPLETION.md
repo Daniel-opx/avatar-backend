@@ -72,8 +72,9 @@ accesses these tables directly; public Supabase API access is not used. For futu
 storage, [Supabase private downloads](https://supabase.com/docs/guides/storage/serving/downloads)
 require authenticated access or an authorized expiring link.
 
-Step 18 can still finish its standalone mock poll before retention; protected review always
-requires Step 19 media readiness. Step 20 must compose the whole pipeline around this gate.
+Step 18's standalone service can still finish a mock poll before retention; protected review
+always requires Step 19 media readiness. Step 20's shared composition now applies this gate
+before the worker finishes; see [PIPELINE.md](PIPELINE.md).
 Human approval, publication and advertising are separate future steps and remain disabled.
 
 ## Verification commands

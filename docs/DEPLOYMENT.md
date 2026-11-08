@@ -10,6 +10,8 @@ Rendering remains disabled; no API flag or provider secret alone can activate th
 Step 19 completion is likewise hard-disabled: no webhook secret, provider or storage adapter
 is registered in production. Its private tables default inactive. Review/callback operations
 return disabled until a separate implementation/authorization for real accounts.
+Step 20 reuses the existing manual processing trigger and schema; composed rendering now
+requires retained media before human review. No new configuration, provider key or migration.
 
 Status: reviewed application source `21665a3` deployed on the existing Render Free service.
 Step 19 mock callback/retention/review is implemented. Scheduling, processing, content, assets,
@@ -75,7 +77,7 @@ Remove-Item Env:RUN_DB_TESTS
 ```
 
 Database tests create/drop unique `step12_test_<uuid>`, `step15_test_<uuid>`, `step16_test_<uuid>`
-and `step17_test_<uuid>` / `step18_test_<uuid>` / `step19_test_<uuid>` schemas. They require schema
+and `step17_test_<uuid>` / `step18_test_<uuid>` / `step19_test_<uuid>` / `step20_test_<uuid>` schemas. They require schema
 creation permission and a valid CA. They never enable or mutate the live schedule.
 Use the disposable-schema suite instead of `test-step11-live.js` for ongoing regression testing.
 The old Step 11 script temporarily changes live scheduler configuration and retains test jobs.

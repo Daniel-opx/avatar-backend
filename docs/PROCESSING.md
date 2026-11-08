@@ -14,6 +14,8 @@ share the lease-fenced checkpoint transaction; no video generation is implied.
 Step 18 adds a hard-disabled render handler backed by a durable submit/poll journal.
 Mock transports are injected only in tests/demo; uncertain submissions require reconciliation.
 See [RENDERING.md](RENDERING.md). Completing this mock stage implies no real review media.
+Step 20's shared composition now waits for retained mock media before final review, using
+the existing render checkpoint and manual trigger. See [PIPELINE.md](PIPELINE.md).
 
 Job creation and video execution are separate. `jobs.status` retains its existing values.
 Every newly inserted job gets a `job_processing` row in the same transaction, including

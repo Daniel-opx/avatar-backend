@@ -4,6 +4,8 @@ The owner authorized continued development using mocks, with no additional provi
 spending. This is the current execution policy until explicitly changed by the owner.
 Continue implementation and controlled testing in roadmap order; do not treat a pending
 live-account test as permission to enable a provider or as evidence that the integration works.
+Updated scope: complete the small Step 20 mock workflow, then pause wider roadmap expansion
+until an explicitly approved real script-to-video trial. Reuse the existing backend components.
 
 ## Outstanding live prerequisites
 
@@ -44,6 +46,8 @@ the rendering stage now uses Step 18's request journal and HTTP-contract mock ad
 Step 19 also verifies a signed simulated callback, retention of labeled in-memory fixture
 bytes and an expiring review grant. No bearer token is printed. The fixture is not a playable
 video and is removed after the demo. See [COMPLETION.md](COMPLETION.md).
+Step 20 uses the shared pipeline composition and adds a separate retention invocation before
+the job can reach review; see [PIPELINE.md](PIPELINE.md).
 No sample video file is produced. Real storage/media,
 avatar permissions and provider generation remain unverified; see [ASSETS.md](ASSETS.md).
 The mock video ID is retained only in the disposable render journal, never as a real

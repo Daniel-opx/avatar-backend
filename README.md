@@ -8,6 +8,8 @@ Step 17 asset preparation passes mock/database checks, with external voice disab
 Step 18 mock rendering has a tested durable submission/poll journal; live verification is deferred.
 Step 19 adds mock authenticated callbacks, deduplication, retained media metadata and expiring
 review links. Production completion remains disabled; real media/account verification is pending.
+Step 20 connects those services through retention to human review. Broader feature work
+pauses after this mock MVP until an approved real script-to-video trial is possible.
 Latest application source deployed to the existing Render Free service: `21665a3`.
 Scheduling and processing remain disabled; GitHub Actions supports manual tests only.
 No generation, publishing, advertising, or paid provider integration is enabled.
@@ -24,9 +26,10 @@ access/budget and HeyGen API video credits/budget are still required before live
 - [Private asset manifests, validation and optional mock voice](docs/ASSETS.md)
 - [Mock HeyGen rendering, duplicate protection and polling](docs/RENDERING.md)
 - [Mock callbacks, private retention and protected review](docs/COMPLETION.md)
+- [Small end-to-end mock pipeline and manual demo](docs/PIPELINE.md)
 
 Run locally with `npm ci` then `npm start`. Configure credentials privately in `.env`;
 see the deployment guide. Run `npm test` for local checks; opt-in PostgreSQL test
-instructions are in the processing/content/asset/rendering/completion guides. Full regression:
-131 passed, zero failures/skips; final Step 19 checks are recorded in the project status.
+instructions are in the processing/content/asset/rendering/completion/pipeline guides.
+Full regression: 139 passed, zero failures/skips.
 Run `npm run demo:mock` for a disposable simulated walkthrough; no real video is generated.
