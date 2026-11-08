@@ -1,7 +1,6 @@
 const express = require('express');
-const { createProcessing } = require('../services/processing');
 
-function processingRouter(service = createProcessing(require('../db/pool'))) {
+function processingRouter(service = require('../services/pipeline').createPipeline().processing) {
   const router = express.Router();
   const validId = id => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
   function handle(work) {

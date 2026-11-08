@@ -1,8 +1,9 @@
 # Durable processing (Step 15)
 
-Implemented and deployed (`8c708a7`); development paused by the owner on 2026-11-06.
-Processing remains disabled. Final regression suite: 57 passed, zero failures/skips.
-All provider handlers used in tests are controlled test code; no live provider is integrated.
+Step 15 deployed as `8c708a7`; development resumed for Step 16 on 2026-11-08.
+Processing remains disabled. Step 15 regression suite: 57 passed, zero failures/skips.
+Step 16 adds a gated content handler with an optional adapter; live provider verification
+remains pending. See [CONTENT.md](CONTENT.md).
 
 Job creation and video execution are separate. `jobs.status` retains its existing values.
 Every newly inserted job gets a `job_processing` row in the same transaction, including
@@ -49,12 +50,14 @@ capped at one hour, with three attempts per stage by default (database limit 1â€
 Manual retries retain prior attempt history. Successful polls reset the consecutive
 failure budget. Disabling processing preserves all pending work.
 
-The engine supplies a stable `jobId:stage` operation key. `retrySafe: true` is a contract:
+The engine supplies a stable `jobId:stage` operation key (content includes its revision).
+`retrySafe: true` is a contract:
 the adapter/provider must enforce idempotency across overlapping/late requests, including
 a timeout after submission. Database fencing alone cannot guarantee exactly-once external
 effects. Adapters are server code, never supplied by HTTP callers. No adapters are
-registered in the production router yet, so an enabled but unconfigured engine claims
-no new work. Controlled adapters in tests do not verify any real provider integration.
+active by default. The Step 16 content handler additionally checks its own database/runtime
+gates before claiming work. An unconfigured engine claims no new work. Controlled adapters
+in tests do not verify any real provider integration.
 
 Long operations must use `PendingStep({ externalId, ... }, pollAfterSeconds)`, save the
 external identifier, and return. The next invocation receives that checkpoint as

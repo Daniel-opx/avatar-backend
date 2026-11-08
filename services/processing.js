@@ -2,11 +2,12 @@ const { randomUUID } = require('node:crypto');
 const STAGES = ['content', 'assets', 'render', 'review'];
 const backoff = attempt => Math.min(3600, 30 * 2 ** Math.min(attempt - 1, 10));
 class StepError extends Error {
-  constructor(code, { transient = false, uncertain = false } = {}) {
+  constructor(code, { transient = false, uncertain = false, reconcile = false } = {}) {
     super('Processing step failed');
     this.code = /^[A-Z_]{1,60}$/.test(code) ? code : 'STEP_FAILED';
     this.transient = transient;
     this.uncertain = uncertain;
+    this.reconcile = reconcile;
   }
 }
 class PendingStep {
@@ -60,7 +61,11 @@ function createProcessing(pool, handlers = {}, schema = 'public') {
       const cfg = await query('SELECT enabled FROM public.processing_config WHERE id=1 FOR SHARE');
       if (!cfg.rows[0]?.enabled) return { status: 'disabled' };
       await recover(query);
-      const configured = STAGES.filter(stage => typeof handlers[stage]?.run === 'function');
+      const configured = [];
+      for (const stage of STAGES) {
+        if (typeof handlers[stage]?.run === 'function' &&
+            (!handlers[stage].isAvailable || await handlers[stage].isAvailable(query))) configured.push(stage);
+      }
       if (!configured.length) return { status: 'unconfigured' };
       const r = await query(`SELECT p.* FROM public.job_processing p JOIN public.jobs j ON j.id=p.job_id
         WHERE p.state IN ('queued','retry_wait') AND p.next_attempt_at<=clock_timestamp()
@@ -89,12 +94,13 @@ function createProcessing(pool, handlers = {}, schema = 'public') {
       [row.job_id, row.lease_token]);
       if (!current.rows.length) return { status: 'stale' };
       if (failure) {
-        const state = failure.uncertain && !row.retry_safe ? 'needs_reconciliation' :
+        const state = failure.reconcile || (failure.uncertain && !row.retry_safe) ? 'needs_reconciliation' :
           failure.transient && row.retry_safe && row.attempts < row.max_attempts ? 'retry_wait' : 'failed';
         await settle(query, row, state, failure.code);
         return { status: state };
       }
       const pending = output instanceof PendingStep;
+      if (!pending && handlers[row.stage]?.commit) await handlers[row.stage].commit(query,row,output);
       const next = pending ? row.stage : STAGES[STAGES.indexOf(row.stage) + 1];
       const checkpoint = await query(`INSERT INTO public.job_checkpoints AS cp(job_id,stage,output,completed)
         VALUES($1,$2,$3::jsonb,$4) ON CONFLICT(job_id,stage) DO UPDATE
@@ -130,8 +136,9 @@ function createProcessing(pool, handlers = {}, schema = 'public') {
       // enforce this stable key before declaring retrySafe. No long render waits.
       output = await Promise.race([
         Promise.resolve().then(() => handlers[row.stage].run({
-          jobId: row.job_id, operationKey: `${row.job_id}:${row.stage}`,
+          jobId: row.job_id, operationKey: `${row.job_id}:${row.stage}${row.stage==='content' && row.content_revision ? `:${row.content_revision}` : ''}`,
           signal: controller.signal, progress: claimed.progress,
+          revision: row.content_revision, leaseToken: row.lease_token,
         })),
         new Promise((_, reject) => { timer = setTimeout(() => {
           reject(new StepError('STEP_TIMEOUT', { transient: true, uncertain: true })); controller.abort();

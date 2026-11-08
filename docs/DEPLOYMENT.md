@@ -1,7 +1,7 @@
 # Deployment and recovery
 
 Status: reviewed application source `8c708a7` deployed on the existing Render Free service.
-Development paused by the owner after Step 15 on 2026-11-06. Both scheduling and processing
+Development resumed for Step 16 on 2026-11-08. Scheduling, processing and content generation
 remain disabled. Deployment `dep-dbmodfff3r2c73b7nep0` succeeded; live health/readiness returned
 200. Authenticated processing was checked locally against the live database (200 disabled);
 the production owner-authenticated processing route has not been separately exercised.
@@ -20,6 +20,9 @@ See `PROJECT_STATUS.md` for the evidence and remaining acceptance work.
 Keep `.env` local and untracked. Required: `DATABASE_URL`, `API_KEY`.
 Optional: `PORT` (3000), `NODE_ENV`, `DATABASE_CA_CERT` (PEM text, real newlines or escaped `\n`).
 Optional `SCHEDULER_API_KEY`: distinct 32+ character secret granting only scheduler POST access.
+Step 16's optional server-only `OPENAI_API_KEY` is unused unless `CONTENT_LIVE_ENABLED=true`
+and the database content/processing configuration is explicitly enabled with model and
+request allowance. These remain disabled; see [CONTENT.md](CONTENT.md) before any activation.
 Configure privately in Render; copy only this limited key into GitHub Actions secret
 `AVATAR_SCHEDULER_KEY`. Leave the owner `API_KEY` out of GitHub. Absence preserves existing owner
 access; an explicitly empty, short, whitespace-padded or identical scheduler key fails startup.
@@ -47,7 +50,7 @@ npm test
 Remove-Item Env:RUN_DB_TESTS
 ```
 
-Database tests create/drop unique `step12_test_<uuid>` and `step15_test_<uuid>` schemas. They require schema
+Database tests create/drop unique `step12_test_<uuid>`, `step15_test_<uuid>` and `step16_test_<uuid>` schemas. They require schema
 creation permission and a valid CA. They never enable or mutate the live schedule.
 Use the disposable-schema suite instead of `test-step11-live.js` for ongoing regression testing.
 The old Step 11 script temporarily changes live scheduler configuration and retains test jobs.
@@ -93,6 +96,9 @@ For an application rollback retain the additive columns; the old scheduler ignor
 Disable scheduling before rollback: older code consumes a slot and disables recurrence.
 Do not drop columns or delete jobs as a rollback shortcut. Confirm backups in Supabase before
 future production schema changes. A migration ledger/runner is still a deployment tooling gap.
+Step 16 is recorded in the hosted migration ledger; older DDL is not. Reconcile that
+baseline before using a general migration runner. The Step 16 migration is applied once
+and keeps content disabled; retain the additive tables during application rollbacks.
 
 If a test process is killed, a disposable schema can remain. Confirm its generated name and
 ownership before targeted cleanup; never drop `public` or use a schema wildcard.

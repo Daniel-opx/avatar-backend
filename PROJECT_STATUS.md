@@ -1,13 +1,13 @@
 # AI Avatar Automation — development status
 
-Updated: 2026-11-06 (Asia/Jerusalem).
+Updated: 2026-11-08 (Asia/Jerusalem).
 Authoritative roadmap: [DEVELOPMENT_ROADMAP.md](docs/DEVELOPMENT_ROADMAP.md).
 Original Hebrew architecture document: not found in the repository; requirements depending on it remain unresolved.
 
-## Paused handoff — 2026-11-06
+## Current handoff — 2026-11-08
 
-Development stopped at the owner's request after completing Step 15. Do not resume
-implementation until requested. Step 16 has not started; AI provider remains undecided.
+Owner resumed development for Step 16 on 2026-11-08 after the Step 15 pause.
+Step 16 code and database tests passed; AI provider remains undecided and live verification is pending.
 Latest application deployment: `8c708a7` on the existing Render Free service; subsequent
 commits update documentation only and do not require redeploying the application.
 Last verified database state: 4 jobs, scheduling=false, processing=false, 0 queued jobs,
@@ -24,7 +24,7 @@ it is not part of the reviewed/deployed application commits.
 - [x] Step 13: Free deployment, settings, authentication, restart and controlled post-idle recovery verified; infrastructure limitations documented.
 - [x] Step 14: GitHub-hosted health, scoped authentication and repeated post-idle triggers verified; recurring template prepared but intentionally inactive.
 - [x] Step 15: durable processing/lifecycle, attempts, leases, retries and cancellation; disabled by default, real provider adapters remain future work.
-- [ ] Step 16: provider abstraction and versioned structured Hebrew LLM content.
+- [ ] Step 16: provider abstraction and versioned Hebrew content implemented/tested; chosen-account live test still pending.
 - [ ] Step 17: protected creative assets and optional voice generation.
 - [ ] Step 18: HeyGen rendering provider and safe submission recovery.
 - [ ] Step 19: authenticated/deduplicated callbacks, storage and reconciliation.
@@ -39,6 +39,32 @@ it is not part of the reviewed/deployed application commits.
 - [ ] Step 28: durable audit, monitoring and alerts.
 - [ ] Step 29: full acceptance/security testing and authorized live demonstration.
 - [ ] Step 30: operational documentation and separately approved gradual launch.
+
+## Step 16 implementation and evidence
+
+Added provider-neutral generation service, optional OpenAI Responses adapter, closed Hebrew
+content schema, versioned database prompts/packages, durable request/call journal, usage and
+optional cost estimates. Added owner-only retrieval/idempotent regeneration routes and wired
+the content handler into the existing processing engine. New job fields are updated only
+inside the fenced checkpoint transaction. Unknown provider outcomes force reconciliation.
+Known rate-limit rejections have bounded retries; request allowance is serialized in PostgreSQL.
+
+Provider selection remains undecided. No model/pricing defaults, live test budget or provider
+credentials were chosen. Runtime and database activation remain disabled. Test fixtures are
+not live integration verification or evidence of Hebrew marketing quality. Step 16 remains
+unchecked until an authorized chosen-provider test verifies the remaining acceptance criteria.
+Details, limitations and PowerShell tests: [CONTENT.md](docs/CONTENT.md).
+Final expanded suite: `RUN_DB_TESTS=1; npm test` — 76 passing test records, zero failures/skips.
+This includes 13 real PostgreSQL content subtests plus HTTP/schema/provider tests and all
+existing scheduler/processing regressions. No paid/live provider calls were made.
+Migration applied through the Supabase connector, hosted version `20261108184837`;
+CLI-generated local file aligned to that version. Earlier schema migrations remain untracked.
+Live postcheck: 4 jobs, 0 content calls/versions, scheduling/processing/content all false,
+provider/model NULL, max_requests=0, requests_used=0.
+Advisors reported INFO only: intentionally private RLS tables without client policies,
+unused indexes on inactive queues, and unindexed prompt FKs / existing event FK. No warning
+or error findings; small config/prompt tables and retained prompt versions need no added
+indexes for this step. These notices are not a comprehensive security assurance.
 
 ## Step 15 implementation and evidence
 
@@ -283,5 +309,5 @@ Reviewed build/runtime logs showed safe structured messages, no visible credenti
   Heavy unauthenticated traffic can consume the shared budget; this is not a distributed WAF.
 - Current shared key is temporary; team identities are Step 21.
 - Latest deployed source `8c708a7`; unrelated preexisting `test.js` edit preserved unstaged.
-- No migration ledger yet; future schema work needs tracked transactional migration execution.
+- Step 16 has a hosted migration ledger entry; earlier DDL is untracked. Reconcile the baseline before using a general migration runner.
 - See `docs/DEPLOYMENT.md` for test commands, rotation sequence and migration recovery.
