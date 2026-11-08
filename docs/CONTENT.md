@@ -71,6 +71,8 @@ provider evaluation. Nothing generated here is approved for publication automati
 Step 17 consumes the saved content revision to prepare a private asset manifest. Regeneration
 keeps prior content/assets as history and does not reuse another revision's media references.
 See [ASSETS.md](ASSETS.md); no live storage or TTS provider is activated.
+Step 18 journals a mock single-avatar render using that manifest; it never treats a mock ID
+as a real video. Live LLM/HeyGen accounts and budgets remain outstanding.
 
 Both routes require the owner `x-api-key`; the scheduler-only key is denied.
 

@@ -3,9 +3,9 @@
 Owner authorized mock-only continuation, not recurring activation or provider spending.
 Real LLM/HeyGen API access and budgets remain pending; see [MOCK_DEVELOPMENT.md](MOCK_DEVELOPMENT.md).
 
-Current handoff: Step 17 mock development on 2026-11-08. Manual GitHub tests are
+Current handoff: Step 18 mock development on 2026-11-08. Manual GitHub tests are
 verified; recurring runs remain unconfigured, and database scheduling/processing remain
-disabled. Latest overall regression suite: 91 passed, zero failures/skips.
+disabled. Latest overall regression suite: 114 passed, zero failures/skips.
 See [PROJECT_STATUS.md](../PROJECT_STATUS.md) for the current deployment and evidence.
 
 Status: owner selected GitHub Actions on 2026-11-06. Provider-independent local trigger client

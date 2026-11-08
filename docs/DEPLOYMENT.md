@@ -5,6 +5,8 @@ upgrade HeyGen/Render, or activate automation. Real LLM API access and a HeyGen 
 budget remain outstanding; see [MOCK_DEVELOPMENT.md](MOCK_DEVELOPMENT.md).
 Step 17 does not provision storage buckets or configure a real TTS adapter. Asset preparation
 remains disabled in the production pipeline; see [ASSETS.md](ASSETS.md).
+Step 18 similarly does not register a live HeyGen transport or accept real HeyGen credentials.
+Rendering remains disabled; no API flag or provider secret alone can activate this mock adapter.
 
 Status: reviewed application source `d53aa9a` deployed on the existing Render Free service.
 Step 17 mock preparation is implemented. Scheduling, processing, content and asset preparation
@@ -61,7 +63,7 @@ Remove-Item Env:RUN_DB_TESTS
 ```
 
 Database tests create/drop unique `step12_test_<uuid>`, `step15_test_<uuid>`, `step16_test_<uuid>`
-and `step17_test_<uuid>` schemas. They require schema
+and `step17_test_<uuid>` / `step18_test_<uuid>` schemas. They require schema
 creation permission and a valid CA. They never enable or mutate the live schedule.
 Use the disposable-schema suite instead of `test-step11-live.js` for ongoing regression testing.
 The old Step 11 script temporarily changes live scheduler configuration and retains test jobs.

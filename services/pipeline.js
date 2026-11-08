@@ -2,6 +2,7 @@ const { createProcessing } = require('./processing');
 const { createContentService } = require('./content');
 const { createOpenAI } = require('./llm-provider');
 const { createAssetService } = require('./assets');
+const { createRenderService } = require('./rendering');
 function createPipeline(pool = require('../db/pool'), env = process.env) {
   const liveAllowed = env.CONTENT_LIVE_ENABLED === 'true';
   const providers = {};
@@ -9,6 +10,9 @@ function createPipeline(pool = require('../db/pool'), env = process.env) {
   const content = createContentService(pool,{ providers,liveAllowed });
   // Step 17 stays mock-only; real storage/voice adapters are not registered here.
   const assets = createAssetService(pool);
-  return { content, assets, processing: createProcessing(pool,{ content: content.handler, assets: assets.handler }) };
+  // Mock transports exist only in tests/demo; credentials cannot enable rendering here.
+  const rendering = createRenderService(pool);
+  return { content, assets, rendering, processing: createProcessing(pool,{
+    content: content.handler, assets: assets.handler, render: rendering.handler }) };
 }
 module.exports = { createPipeline };

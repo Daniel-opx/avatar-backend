@@ -40,8 +40,11 @@ handlers through the real durable engine. Only the disposable configuration is e
 It simulates submission/polling and stops at a simulated human-review state. It creates no
 real video, makes no LLM/HeyGen/TTS requests, publishes nothing, and drops its schema afterward.
 The asset stage now uses Step 17's real metadata/manifest service with simulated configuration;
-the rendering stage remains a stub. No sample video file is produced. Real storage/media,
+the rendering stage now uses Step 18's request journal and HTTP-contract mock adapter.
+No sample video file is produced. Real storage/media,
 avatar permissions and provider generation remain unverified; see [ASSETS.md](ASSETS.md).
+The mock video ID is retained only in the disposable render journal, never as a real
+jobs.heygen_video_id. See [RENDERING.md](RENDERING.md) for submission/restart guarantees and limits.
 If interrupted, a disposable `mock_demo_<uuid>` schema may need targeted cleanup after its
 ownership/name is verified. Never delete `public` or clean schemas by wildcard.
 

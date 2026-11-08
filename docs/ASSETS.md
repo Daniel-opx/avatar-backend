@@ -100,8 +100,9 @@ The full suite serializes test files to fit the existing Supabase session pool. 
 tests still exercise overlapping requests/workers. Do not run the database demo alongside
 the full suite: separate schemas isolate records but still share the connection allowance.
 Tests use disposable `step17_test_<uuid>` schemas and controlled storage/voice functions.
-The demo now uses this real manifest service, while content generation and rendering remain
-simulated. Success is mock evidence, not a real video or live provider acceptance.
+The demo uses this manifest service and Step 18's durable render journal, with simulated
+content/HeyGen responses. Success is mock evidence, not a real video or live acceptance.
+See [RENDERING.md](RENDERING.md); unsupported multi-scene/external media is rejected explicitly.
 
 Official references checked 2026-11-08:
 [HeyGen Digital Twin](https://developers.heygen.com/generate-avatar-video),

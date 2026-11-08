@@ -11,6 +11,9 @@ remains pending. See [CONTENT.md](CONTENT.md).
 Step 17 adds a gated asset handler; production preparation remains hard-disabled and local
 tests/demo inject mock-only dependencies. See [ASSETS.md](ASSETS.md). Asset manifest writes
 share the lease-fenced checkpoint transaction; no video generation is implied.
+Step 18 adds a hard-disabled render handler backed by a durable submit/poll journal.
+Mock transports are injected only in tests/demo; uncertain submissions require reconciliation.
+See [RENDERING.md](RENDERING.md). Completing this mock stage implies no real review media.
 
 Job creation and video execution are separate. `jobs.status` retains its existing values.
 Every newly inserted job gets a `job_processing` row in the same transaction, including

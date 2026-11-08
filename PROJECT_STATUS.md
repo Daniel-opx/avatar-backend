@@ -8,7 +8,7 @@ Original Hebrew architecture document: not found in the repository; requirements
 
 Owner resumed development for Step 16 on 2026-11-08 after the Step 15 pause.
 Owner subsequently authorized **mock-only continuation with no additional spending**.
-Current work: Step 17 asset preparation passed mocked/database checks; real storage/voice/avatar acceptance is deferred.
+Current work: Step 18 mock rendering journal/adapter passed database/controlled-provider checks; live acceptance is deferred.
 Real LLM API account/model/credentials/budget and HeyGen API video credits/rendering budget
 remain outstanding. The ChatGPT membership and HeyGen free web plan are not treated as
 funded backend API access. See [MOCK_DEVELOPMENT.md](docs/MOCK_DEVELOPMENT.md) for the policy
@@ -20,7 +20,7 @@ Last verified database state: 4 jobs, scheduling=false, processing=false, 0 queu
 content_enabled=false, assets_enabled=false, provider/model unset, max_requests=0,
 0 content calls/versions/assets/manifests, no leftover test/demo schemas. GitHub workflow remains manual-only. No paid provider
 calls, automatic publication, advertising or unattended processing were enabled.
-Last complete regression suite: 91 passed, zero failures/skips.
+Last complete regression suite: 114 passed, zero failures/skips.
 The preexisting local `test.js` modification is intentionally left uncommitted and unchanged;
 it is not part of the reviewed/deployed application commits.
 
@@ -33,7 +33,7 @@ it is not part of the reviewed/deployed application commits.
 - [x] Step 15: durable processing/lifecycle, attempts, leases, retries and cancellation; disabled by default, real provider adapters remain future work.
 - [ ] Step 16: provider abstraction and versioned Hebrew content implemented/tested; chosen-account live test still pending.
 - [ ] Step 17: mock-only asset preparation implemented/tested; live media/avatar/voice acceptance deferred.
-- [ ] Step 18: HeyGen rendering provider and safe submission recovery.
+- [ ] Step 18: mock HeyGen v3 adapter and durable submit/poll journal implemented/tested; live test deferred.
 - [ ] Step 19: authenticated/deduplicated callbacks, storage and reconciliation.
 - [ ] Step 20: resumable generation pipeline ending at human review.
 - [ ] Step 21: team identities, roles and separate internal service authentication.
@@ -46,6 +46,36 @@ it is not part of the reviewed/deployed application commits.
 - [ ] Step 28: durable audit, monitoring and alerts.
 - [ ] Step 29: full acceptance/security testing and authorized live demonstration.
 - [ ] Step 30: operational documentation and separately approved gradual launch.
+
+## Step 18 implementation and evidence
+
+Added mock-only HeyGen v3 request mapping/transport adapter, durable per-revision render
+requests and per-operation history, serialized submission allowance, stable idempotency
+keys, saved external mock IDs and resumable bounded polling. Unknown submission outcomes
+require reconciliation. Late polling results are fenced; cached completion supports rollback
+recovery. Raw provider errors, signed output URLs and credentials are not retained.
+Mock IDs are not written to jobs.heygen_video_id. Production rendering is hard-disabled;
+no environment key can activate it. Owner-only rendering-history route added; no webhook,
+real account call, file upload, paid credits or real video. See [RENDERING.md](docs/RENDERING.md).
+Current composition supports one talking-avatar scene with built-in voice; extra media,
+external audio and multi-scene plans fail explicitly. Live avatar/voice/engine support,
+API scopes, credits, costs, output quality and provider replay behavior remain unverified.
+Initial rendering checks: 18 passed with real isolated PostgreSQL and controlled responses.
+Final sequential suite: `RUN_DB_TESTS=1; npm test` — 114 passed, zero failures/skips.
+Includes 16 real PostgreSQL rendering subtests plus HTTP/adapter tests and prior regressions:
+overlap, stable keys, Retry-After, quota failures, lost acceptance/commit acknowledgements,
+restart recovery, stale polls, checkpoint rollback and bounded polling/submissions.
+All provider responses are controlled fixtures. No real HeyGen endpoint/account, provider
+replay behavior, video quality, media accessibility or cost has been verified.
+Updated demo passed: one mock submission, persisted `mock_demo_video`, later polling to
+simulated review, zero real provider calls/videos/publications, disposable schema removed.
+Migration applied through Supabase connector, hosted/local version `20261108193747`.
+Live schema postcheck: 4 jobs, zero render requests/calls, scheduling/processing/content/
+assets/rendering all false, mode=mock, max_submissions=0, submissions_used=0.
+All three render tables have RLS and deny anon/authenticated SELECT. Disposable Step 18/demo
+schemas remaining: 0. Advisor results: INFO only for intentionally private policy-free tables,
+inactive indexes and previously recorded FK notices; no warning/error findings.
+Syntax, whitespace and aligned migration-path checks passed. Deployment evidence pending.
 
 ## Step 17 implementation and evidence
 
