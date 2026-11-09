@@ -70,14 +70,15 @@ adapter or TTS adapter. The database also starts disabled. There is no environme
 to activate the asset handler. Mocks are instantiated only by tests and the local demo.
 Normal production processing remains disabled; no recurring trigger is changed.
 
-## Owner-only routes and retention
+## Authorized routes and retention
 
 - `GET /jobs/{id}/assets`: metadata and saved manifests. No signed URLs.
 - `POST /jobs/{id}/assets`: `{ "revision": 1, "asset": { ...metadata... } }`.
   Production returns unconfigured (409); registration requires explicitly injected mock
   preparation/storage adapters. This is not a file-upload endpoint.
 
-The scheduler-only key is denied both routes. Validation errors and adapter failures use
+The server owner key remains supported. Team roles may read; only admin/operator may register
+metadata, with session/CSRF protection. The scheduler key is denied. Validation errors and adapter failures use
 sanitized responses rather than raw storage errors or tokens.
 
 Retention defaults to 30 days. The service's explicit `expireReferences()` maintenance

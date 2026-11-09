@@ -3,6 +3,10 @@
 Current spending policy: mock-only development. Do not enable provider flags, buy credits,
 upgrade HeyGen/Render, or activate automation. Real LLM API access and a HeyGen API video
 budget remain outstanding; see [MOCK_DEVELOPMENT.md](MOCK_DEVELOPMENT.md).
+Steps 21–22 add inactive team sign-in and mock approval APIs. No real team user is provisioned,
+no external messages are sent, and mock approval cannot publish. See [TEAM_ACCESS.md](TEAM_ACCESS.md)
+and [APPROVALS.md](APPROVALS.md) before real-account activation. The original owner key is
+still server-only; human decisions require individual team sessions.
 Step 17 does not provision storage buckets or configure a real TTS adapter. Asset preparation
 remains disabled in the production pipeline; see [ASSETS.md](ASSETS.md).
 Step 18 similarly does not register a live HeyGen transport or accept real HeyGen credentials.
@@ -35,7 +39,8 @@ All new tables are private with RLS and denied client reads. The live database s
 Step 20 regression: 139 passed, zero failures/skips; five-invocation mock demo passed. No new
 migration or endpoint. Local owner-authenticated manual processing returned disabled/200;
 deployed anonymous manual processing returned 401. Broader roadmap expansion is deferred
-until an approved real script-to-video trial; production flags remain off.
+until an approved real script-to-video trial; production flags remain off. Owner subsequently
+resumed Steps 21–22 on 2026-11-09; their evidence is recorded in PROJECT_STATUS.md.
 Live at https://avatar-backend-65ep.onrender.com. Unattended automation is NOT authorized.
 HTTPS health/readiness passed; missing/old keys rejected. Owner-run fresh-key `GET /jobs`
 returned 200 on 2026-11-06. Build/start/health settings aligned; rebuild and restart recovery passed.
@@ -82,7 +87,8 @@ Remove-Item Env:RUN_DB_TESTS
 ```
 
 Database tests create/drop unique `step12_test_<uuid>`, `step15_test_<uuid>`, `step16_test_<uuid>`
-and `step17_test_<uuid>` / `step18_test_<uuid>` / `step19_test_<uuid>` / `step20_test_<uuid>` schemas. They require schema
+and `step17_test_<uuid>` / `step18_test_<uuid>` / `step19_test_<uuid>` / `step20_test_<uuid>` /
+`step21_test_<uuid>` schemas. They require schema
 creation permission and a valid CA. They never enable or mutate the live schedule.
 Use the disposable-schema suite instead of `test-step11-live.js` for ongoing regression testing.
 The old Step 11 script temporarily changes live scheduler configuration and retains test jobs.

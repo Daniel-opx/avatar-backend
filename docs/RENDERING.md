@@ -73,9 +73,9 @@ All have RLS and no public/anon/authenticated grants. No old job is enrolled/bac
 Estimated cost stays NULL because no real usage/price was reported; NULL is not zero cost.
 Calls retain action, timestamps, sanitized outcome/code, HTTP status and request ID.
 
-Owner-only `GET /jobs/{id}/rendering` returns sanitized request/call history without raw
-payloads, credentials or video URLs. The scheduler-only key is denied. Existing owner-only
-`POST /internal/processing/run` remains the sole worker trigger; there is no submit/enable
+Owner-key or team-session `GET /jobs/{id}/rendering` returns sanitized history without raw
+payloads, credentials or video URLs. The scheduler key is denied. The server owner uses
+`POST /internal/processing/run`; admin/operators use `POST /team/processing/run`. There is no enable
 HTTP route. Completed simulated jobs stop at a clearly simulated human-review state.
 
 ## Verification (PowerShell)

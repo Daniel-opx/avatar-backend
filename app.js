@@ -6,7 +6,7 @@ const jobsRouter = require('./routes/jobs');
 const internalRouter = require('./routes/internal');
 const apiKeyAuth = require('./middleware/apiKeyAuth');
 
-function createApp({ pool = require('./db/pool'), logger = console.log, rateLimitMax = 120, render = Boolean(process.env.RENDER), completion } = {}) {
+function createApp({ pool = require('./db/pool'), logger = console.log, rateLimitMax = 120, render = Boolean(process.env.RENDER), completion, team, approvals } = {}) {
   const app = express();
   app.disable('x-powered-by');
   app.set('trust proxy', render ? 1 : false);
@@ -30,9 +30,15 @@ function createApp({ pool = require('./db/pool'), logger = console.log, rateLimi
   const json = express.json({ limit: '32kb' });
   const video = require('./routes/video');
   const callbacks = require('./routes/webhooks');
+  team ||= require('./services/team').createTeamService(pool);
+  approvals ||= require('./services/approvals').createApprovalService(pool,team);
+  const auth = require('./middleware/teamAuth').createTeamAuth(team,{secure:render||process.env.NODE_ENV==='production'});
+  const teamRoutes = require('./routes/team');
+  app.use('/auth',json,teamRoutes.authRouter(team,auth));
+  app.use('/team',json,teamRoutes.teamRouter(team,auth,approvals,require('./services/pipeline').createPipeline(pool).processing));
   app.use('/webhooks', callbacks.webhookRouter(completion));
   app.use('/review', callbacks.reviewRouter(completion));
-  app.use('/jobs', apiKeyAuth, json, jobsRouter, require('./routes/content')(), require('./routes/assets')(), require('./routes/rendering')(), video.videoRouter(completion));
+  app.use('/jobs', auth.jobs, json, jobsRouter, require('./routes/content')(), require('./routes/assets')(), require('./routes/rendering')(), video.videoRouter(completion),require('./routes/approvals')(approvals,auth));
   app.use('/internal/videos', apiKeyAuth, json, video.reconcileRouter(completion));
   app.use('/internal/processing', apiKeyAuth, json, require('./routes/processing')());
   app.use('/internal', apiKeyAuth.scheduler, json, internalRouter);

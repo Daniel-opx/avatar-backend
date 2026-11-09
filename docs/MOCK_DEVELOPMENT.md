@@ -4,8 +4,9 @@ The owner authorized continued development using mocks, with no additional provi
 spending. This is the current execution policy until explicitly changed by the owner.
 Continue implementation and controlled testing in roadmap order; do not treat a pending
 live-account test as permission to enable a provider or as evidence that the integration works.
-Updated scope: complete the small Step 20 mock workflow, then pause wider roadmap expansion
-until an explicitly approved real script-to-video trial. Reuse the existing backend components.
+Updated scope on 2026-11-09: owner resumed roadmap work in two-step batches, starting with
+Steps 21–22. The earlier Step 20 feature pause is superseded. No provider spending, real
+generation, publication or advertising is authorized by this scope change.
 
 ## Outstanding live prerequisites
 

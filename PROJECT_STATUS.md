@@ -1,16 +1,16 @@
 # AI Avatar Automation — development status
 
-Updated: 2026-11-08 (Asia/Jerusalem).
+Updated: 2026-11-09 (Asia/Jerusalem).
 Authoritative roadmap: [DEVELOPMENT_ROADMAP.md](docs/DEVELOPMENT_ROADMAP.md).
 Original Hebrew architecture document: not found in the repository; requirements depending on it remain unresolved.
 
-## Current handoff — 2026-11-08
+## Current handoff — 2026-11-09
 
 Owner resumed development for Step 16 on 2026-11-08 after the Step 15 pause.
 Owner subsequently authorized **mock-only continuation with no additional spending**.
-Current milestone: Step 20 mock flow connected, tested and deployed through retained-media review.
-Owner accepted a smaller MVP: finish this connection, then pause broader feature expansion
-until one real script-to-video trial can be authorized with the required accounts and budget.
+Owner resumed development on 2026-11-09 and requested two milestones at a time, in roadmap
+order. Current work is Steps 21–22: team access and exact-version human approval.
+This supersedes the Step 20 feature pause; mock-only/no-additional-spending restrictions remain.
 Real LLM API account/model/credentials/budget and HeyGen API video credits/rendering budget
 remain outstanding. The ChatGPT membership and HeyGen free web plan are not treated as
 funded backend API access. See [MOCK_DEVELOPMENT.md](docs/MOCK_DEVELOPMENT.md) for the policy
@@ -23,7 +23,7 @@ content_enabled=false, assets_enabled=false, render_enabled=false, completion_en
 max_requests=0, max_submissions=0, submissions_used=0, zero content/render calls and generated
 versions/assets/manifests/requests, no leftover test/demo schemas. GitHub workflow remains manual-only. No paid provider
 calls, automatic publication, advertising or unattended processing were enabled.
-Last complete regression suite: 139 passed, zero failures/skips (Step 20).
+Last complete regression suite: 151 passed, zero failures/skips (Steps 21–22).
 The preexisting local `test.js` modification is intentionally left uncommitted and unchanged;
 it is not part of the reviewed/deployed application commits.
 
@@ -39,8 +39,8 @@ it is not part of the reviewed/deployed application commits.
 - [ ] Step 18: mock HeyGen v3 adapter and durable submit/poll journal implemented/tested; live test deferred.
 - [ ] Step 19: mock authenticated/deduplicated callbacks, private fixture retention and review implemented; live acceptance pending.
 - [ ] Step 20: small mock workflow connected/tested through retained-media review; live acceptance pending.
-- [ ] Step 21: team identities, roles and separate internal service authentication.
-- [ ] Step 22: auditable approvals tied to exact content versions.
+- [ ] Step 21: managed identity adapter, private sessions/roles and separate internal authentication implemented; live user acceptance pending.
+- [ ] Step 22: version-bound mock approvals, inbox notifications and replacement generation implemented/tested; actual-video/human acceptance pending.
 - [ ] Step 23: authenticated team dashboard with Hebrew/RTL support.
 - [ ] Step 24: approval-gated GHL organic publishing.
 - [ ] Step 25: approval-gated Meta advertising and budgets.
@@ -49,6 +49,37 @@ it is not part of the reviewed/deployed application commits.
 - [ ] Step 28: durable audit, monitoring and alerts.
 - [ ] Step 29: full acceptance/security testing and authorized live demonstration.
 - [ ] Step 30: operational documentation and separately approved gradual launch.
+
+## Steps 21–22 implementation and evidence
+
+Added Supabase Auth password/getUser adapter using pinned official Auth SDK; private team
+memberships, opaque short-lived cookie sessions, CSRF/origin validation, role boundaries,
+immediate local/session-row revocation, last-admin protection and audit records. Existing
+owner/scheduler authentication remains separate; shared keys cannot make human decisions.
+No team account was provisioned or authentication flag enabled; first administrator UUID
+and account-backed verification remain pending. No `.env` values or credentials were changed.
+
+Added approval snapshots/fingerprints, authenticated reviewer decisions with comments/time,
+deduplication and conflict protection, in-app notifications, stale-content rejection and
+same-job replacement revisions preserving old content/decisions. Mock decisions never set
+publishable job status; the service gate and database trigger deny publication. No publisher,
+WhatsApp/email message or paid integration was activated. See [TEAM_ACCESS.md](docs/TEAM_ACCESS.md)
+and [APPROVALS.md](docs/APPROVALS.md). Initial focused checks: 10 passed; expanded checks:
+12 passed, including replacement generation. Full serialized suite: 151 passed, zero
+failures/skips (574.2 seconds). Final focused run after tightening readiness: 12 passed,
+zero failures/skips (94.6 seconds). Updated mock demo passed, with simulated team sessions,
+one simulated approval, publication denied and immediate logout revocation; no real reviewer
+or account was used. Its disposable schema was removed.
+Applied additive migrations `20261109053326_team_access.sql` and
+`20261109053341_video_approvals.sql` through the Supabase connector; CLI-generated files
+aligned to the hosted ledger. No team membership or activation flag was inserted/enabled.
+Post-migration verification: original 4 jobs, all six generation switches false, zero team
+members/sessions/requests/decisions/notifications/audit records/provider calls and no leftover
+test/demo schemas. All six new tables have RLS and deny anon/authenticated reads. Advisors:
+INFO only (private RLS/no-policy, 3 older unindexed FKs and unused indexes); no warning/error.
+Local owner-key job listing and disabled processing returned 200; team login 503 inactive,
+unauthenticated/team-administration requests 401, and shared-key human approval attempts 401.
+The actual backend role can read the managed Auth metadata needed for session/enrollment checks.
 
 ## Step 20 implementation and evidence
 

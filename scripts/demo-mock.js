@@ -12,6 +12,8 @@ const { createRenderService } = require('../services/rendering');
 const { createMockHeyGen } = require('../services/heygen-mock');
 const { createCompletionService } = require('../services/completion');
 const { createMockVideoStore } = require('../test-support/mock-video-store');
+const { createTeamService } = require('../services/team');
+const { createApprovalService } = require('../services/approvals');
 
 async function main() {
   const schema = `mock_demo_${randomUUID().replaceAll('-', '')}`;
@@ -24,7 +26,8 @@ async function main() {
     schemaCreated = true;
     // Structure only; no real topics, scripts, jobs or credentials are copied.
     await pool.query(`CREATE TABLE ${schema}.jobs (LIKE public.jobs INCLUDING ALL)`);
-    for (const migration of ['20261106073647_durable_processing.sql', '20261108184837_versioned_content.sql', '20261108191748_asset_preparation.sql', '20261108193747_render_requests.sql', '20261108200903_webhook_media.sql']) {
+    await query('CREATE TABLE public.users(id uuid PRIMARY KEY); CREATE TABLE public.sessions(id uuid PRIMARY KEY,user_id uuid REFERENCES public.users(id),not_after timestamptz)');
+    for (const migration of ['20261106073647_durable_processing.sql', '20261108184837_versioned_content.sql', '20261108191748_asset_preparation.sql', '20261108193747_render_requests.sql', '20261108200903_webhook_media.sql', '20261109053326_team_access.sql', '20261109053341_video_approvals.sql']) {
       await query(readFileSync(path.join(__dirname, '../supabase/migrations', migration), 'utf8'));
     }
     await query('UPDATE public.processing_config SET enabled=true');
@@ -83,7 +86,27 @@ async function main() {
     assert.equal(renderHistory.requests[0].external_video_id,'mock_demo_video');
     const grant=await completion.issueReview(jobId);assert.equal(grant.status,'ready');
     const review=await completion.readReview(grant.url.split('/').at(-1));assert.equal(review.status,'ready');
+    const identities={};
+    for(const role of ['operator','reviewer']){
+      const id=randomUUID(),sessionId=randomUUID();identities[role]={id,sessionId,expiresAt:new Date(Date.now()+3600000)};
+      await query('INSERT INTO public.users(id) VALUES($1)',[id]);
+      await query('INSERT INTO public.sessions(id,user_id) VALUES($1,$2)',[sessionId,id]);
+      await query('INSERT INTO public.team_members(id,role) VALUES($1,$2)',[id,role]);
+    }
+    const team=createTeamService(pool,{schema,identitySchema:schema,provider:{enabled:true,
+      async login(email,password){return password==='mock-only'?identities[email.split('@')[0]]:null;}}});
+    const operatorLogin=await team.login('operator@mock.invalid','mock-only');
+    const reviewerLogin=await team.login('reviewer@mock.invalid','mock-only');
+    const approvals=createApprovalService(pool,team,{schema});
+    const request=await approvals.request(await team.lookup(operatorLogin.token),jobId,randomUUID());
+    const decision=await approvals.decide(await team.lookup(reviewerLogin.token),jobId,request.id,{
+      request_key:randomUUID(),action:'approved',expected_hash:request.snapshot_hash,comment:'Simulated review only; no real person approved this fixture.',
+    });
+    assert.equal(decision.state,'approved');assert.equal(decision.publication_authorized,false);
+    await team.logout(reviewerLogin.token,reviewerLogin.csrf);assert.equal(await team.lookup(reviewerLogin.token),null);
     report = { mode: 'MOCK_ONLY', steps, mock_llm_calls: mockCalls,
+      mock_team_sessions_verified:true,mock_reviewer_decision:decision.state,real_human_review:false,
+      publication_authorized:false,logout_revocation_verified:true,
       mock_webhook_accepted:true,private_mock_media_retained:true,expiring_review_link_verified:true,
       review_fixture_bytes:review.bytes.length,playable_video:false,
       mock_render_submissions:mockSubmissions,persisted_mock_video_id:renderHistory.requests[0].external_video_id,

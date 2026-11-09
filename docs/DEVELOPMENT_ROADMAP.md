@@ -5,9 +5,9 @@ provider spending. Real LLM API account/model/credentials/budget and funded HeyG
 access remain prerequisites for live acceptance. Keep those tests pending and label mocks
 clearly; do not activate automation, upgrade plans or purchase credits. See
 [mock development policy](MOCK_DEVELOPMENT.md) and [current checklist](../PROJECT_STATUS.md).
-MVP scope update: connect the existing mock stages in Step 20, then pause broader roadmap
-features until an approved real script-to-video trial. The later steps remain a roadmap,
-not authorization to expand scope automatically. See [PIPELINE.md](PIPELINE.md).
+Scope update on 2026-11-09: owner resumed development in two-step batches, beginning with
+Steps 21–22. This supersedes the Step 20 feature pause. The no-additional-spending policy
+and separate approval gates for real accounts, publishing, advertising and activation remain.
 
 ## Your role
 

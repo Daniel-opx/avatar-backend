@@ -1,9 +1,9 @@
 # Step 20 — small mock generation workflow
 
-Scope decision: prove the core flow before expanding the product. Reuse existing services,
-tables and owner authentication. No dashboard, team roles, publishing, advertising, provider
-activation or new infrastructure is included. Broader roadmap work pauses after this mock
-milestone until one real script-to-video trial can be authorized within an approved budget.
+Step 20 scope: connect the existing services and stop at retained-media review, without
+publishing, advertising, provider activation or new infrastructure. On 2026-11-09 the owner
+resumed roadmap development in two-step batches; subsequent team roles and approval work
+are documented in [TEAM_ACCESS.md](TEAM_ACCESS.md) and [APPROVALS.md](APPROVALS.md).
 
 The shared pipeline composition connects content → assets → render submission/polling →
 media retention → `ready_for_review`. The render checkpoint stores `awaiting_media` between

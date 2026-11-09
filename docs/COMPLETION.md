@@ -39,7 +39,7 @@ three consecutive provider/storage failures require explicit recovery.
 
 The injected mock store copies to a deterministic private object key with put-if-absent
 semantics, then verifies its MIME type, size and SHA256 against independent metadata.
-Owner-only `POST /jobs/:jobId/video/retry-media` resets bounded inspection/retention retries
+Owner-key or admin/operator-session `POST /jobs/:jobId/video/retry-media` resets bounded inspection/retention retries
 for a known, non-failed video without resubmitting generation, and revokes old review grants. A lost copy or
 database commit acknowledgement recovers using the same object identity. Cancellation and
 revision changes prevent promotion and invalidate review access. An interrupted remote copy
@@ -54,8 +54,9 @@ There is no fallback to fetching callback URLs and no real storage bucket was pr
 
 ## Protected review
 
-Owner-only `GET /jobs/:jobId/video` returns sanitized media/event history without object
-paths, payloads, secrets or bearer links. Owner-only `POST /jobs/:jobId/video/review` issues
+Owner-key or team-session `GET /jobs/:jobId/video` returns sanitized media/event history without object
+paths, payloads, secrets or bearer links. `POST /jobs/:jobId/video/review` permits all team roles
+with CSRF verification, or the existing server owner key, and issues
 a relative `/review/:token` link for retained, completed, current, uncancelled media.
 Tokens contain 256 random bits; only SHA256 hashes are stored. Default expiry is five minutes,
 configurable from 30–900 seconds. The bearer link requires no owner key, so share privately.

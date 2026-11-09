@@ -66,7 +66,7 @@ These checks do not establish truth, fact entailment, complete claim disclosure,
 fluency or prompt-injection resistance. Those require human editorial review and real
 provider evaluation. Nothing generated here is approved for publication automatically.
 
-## Owner-only API
+## Authorized content API
 
 Step 17 consumes the saved content revision to prepare a private asset manifest. Regeneration
 keeps prior content/assets as history and does not reuse another revision's media references.
@@ -74,7 +74,8 @@ See [ASSETS.md](ASSETS.md); no live storage or TTS provider is activated.
 Step 18 journals a mock single-avatar render using that manifest; it never treats a mock ID
 as a real video. Live LLM/HeyGen accounts and budgets remain outstanding.
 
-Both routes require the owner `x-api-key`; the scheduler-only key is denied.
+Both routes accept the server owner key or an authorized team session. All team roles can
+read; only admin/operator can regenerate, with CSRF protection. The scheduler key is denied.
 
 - `GET /jobs/{id}/content`: stored versions and sanitized request/usage history.
 - `POST /jobs/{id}/content/regenerate`: body `{"request_key":"<new UUID>"}`.
@@ -83,8 +84,8 @@ Both routes require the owner `x-api-key`; the scheduler-only key is denied.
   rejects running/uncertain work and jobs at review or later. Earlier versions remain;
   the current script/plan and content checkpoint are cleared until the new version succeeds.
 
-Processing still runs only through the existing owner-only manual
-`POST /internal/processing/run`. The GitHub scheduler key never gains this permission.
+The server owner uses `POST /internal/processing/run`; admin/operators use the separate
+`POST /team/processing/run` session/CSRF route. The GitHub scheduler key never gains this permission.
 
 ## Activation remains separate
 

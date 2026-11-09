@@ -93,6 +93,11 @@ All require `x-api-key: API_KEY`. The separate scheduler key is denied.
 - `POST /internal/processing/{job UUID}/retry`: safe failed job only; conflict is HTTP 409.
 - `POST /internal/processing/{job UUID}/cancel`: unclaimed work only; conflict is HTTP 409.
 
+Step 21 adds separate human-session routes: admin/operators use `/team/processing/run`
+and `/team/jobs/:id/retry` or `/cancel`; all team roles can read `/team/jobs/:id/history`.
+These require session/CSRF authorization, not the server key. Team cookies never grant
+access to `/internal/*`. See [TEAM_ACCESS.md](TEAM_ACCESS.md).
+
 There is deliberately no HTTP enable switch. Activation and provider budgets require
 separate review. Render Free can sleep/restart, so work is durable but start times and
 continuous execution are not guaranteed. Future triggers must call these bounded steps;
