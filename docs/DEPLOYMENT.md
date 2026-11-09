@@ -3,8 +3,9 @@
 Current spending policy: mock-only development. Do not enable provider flags, buy credits,
 upgrade HeyGen/Render, or activate automation. Real LLM API access and a HeyGen API video
 budget remain outstanding; see [MOCK_DEVELOPMENT.md](MOCK_DEVELOPMENT.md).
-Steps 21–22 add inactive team sign-in and mock approval APIs. No real team user is provisioned,
-no external messages are sent, and mock approval cannot publish. See [TEAM_ACCESS.md](TEAM_ACCESS.md)
+Steps 21–22 add inactive team sign-in and mock approval APIs. The first administrator was
+registered on 2026-11-09; private Render Auth configuration remains pending. No external
+messages are sent, and mock approval cannot publish. See [TEAM_ACCESS.md](TEAM_ACCESS.md)
 and [APPROVALS.md](APPROVALS.md) before real-account activation. The original owner key is
 still server-only; human decisions require individual team sessions.
 Step 17 does not provision storage buckets or configure a real TTS adapter. Asset preparation
@@ -43,8 +44,9 @@ until an approved real script-to-video trial; production flags remain off. Owner
 resumed Steps 21–22 on 2026-11-09; their evidence is recorded in PROJECT_STATUS.md.
 Steps 21–22 regression: 151 passed; final focused checks: 12 passed; simulated approval/logout
 demo passed. Live anonymous team/approval/internal requests return 401; `/auth/login` returns
-503 inactive. No first administrator or actual login is configured. New helper functions and
-tables deny public/client access. There are still 4 jobs, zero team/approval rows and no
+503 inactive at deployment. The first administrator was subsequently registered; actual
+login remains unverified. New helpers/tables deny public/client access. There are still
+4 jobs, one team member, zero approval rows and no
 provider calls. Existing owner-key compatibility was verified locally, without retrieving
 Render's rotated key. No upgrade, external message or publication was performed.
 Live at https://avatar-backend-65ep.onrender.com. Unattended automation is NOT authorized.

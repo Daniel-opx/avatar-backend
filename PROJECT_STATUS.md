@@ -56,8 +56,9 @@ Added Supabase Auth password/getUser adapter using pinned official Auth SDK; pri
 memberships, opaque short-lived cookie sessions, CSRF/origin validation, role boundaries,
 immediate local/session-row revocation, last-admin protection and audit records. Existing
 owner/scheduler authentication remains separate; shared keys cannot make human decisions.
-No team account was provisioned or authentication flag enabled; first administrator UUID
-and account-backed verification remain pending. No `.env` values or credentials were changed.
+Initial deployment provisioned no member and enabled no authentication flag; the first admin
+was subsequently registered as recorded below. Account-backed sign-in verification remains
+pending. No `.env` values or credentials were changed.
 
 Added approval snapshots/fingerprints, authenticated reviewer decisions with comments/time,
 deduplication and conflict protection, in-app notifications, stale-content rejection and
@@ -87,10 +88,17 @@ membership, approval and internal-processing requests returned 401. New public-s
 helper functions deny anon/authenticated execution. Post-deployment counts remain 4 jobs
 and zero real team members/sessions/approval requests/decisions/notifications.
 Deployment screenshot: `steps21-22-render-live.png` in the session visualization directory.
-Real sign-in remains pending first-administrator identity and private configuration; actual
+Real sign-in remains pending private configuration; the first administrator is now registered. Actual
 human/video acceptance remains pending. No outbound messages, paid call, generation activation,
 publishing or advertising occurred. Follow-up report commit changes documentation only.
 Steps 23–24 have not started. Existing `test.js` modification remains untouched and unstaged.
+
+First administrator setup — 2026-11-09: owner supplied a Supabase Auth user UUID. Verified
+the user exists and email is confirmed, then atomically registered it as the first enabled
+administrator under a team-table lock and inserted one bootstrap audit event. Post-check:
+exactly one enabled administrator and one bootstrap audit event; all six generation switches
+remain false. No password, key, `.env`, Render activation setting or user identity was placed
+in Git. Supabase/Render Auth configuration and real login verification remain pending.
 
 ## Step 20 implementation and evidence
 

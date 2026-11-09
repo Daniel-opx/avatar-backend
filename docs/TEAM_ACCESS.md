@@ -5,7 +5,9 @@ client, rather than a new password database or enterprise identity service. Pass
 is verified using `getUser`; role claims in user-editable metadata are ignored. Roles come
 from private `team_members` rows. There is no public signup or automatic team enrollment.
 
-Current production state: **inactive**, no team members provisioned, no credentials changed.
+Current production state: **sign-in inactive**, first administrator registered on 2026-11-09
+after owner supplied an existing confirmed Auth user UUID. Bootstrap audit recorded; no
+password, credential or activation setting changed. The user UUID/email are not copied into Git.
 Account-backed login acceptance is pending. Tests use simulated identities and real isolated
 PostgreSQL tables, not real Supabase accounts. No paid authentication feature is used.
 
@@ -62,7 +64,9 @@ or disabled through the app. External account deletion may require owner-assiste
 
 ## Real-account setup — not executed
 
-Do this only when the owner supplies the intended administrator UUID and chooses activation.
+The first administrator is already registered; do not rerun bootstrap. Sign-in still needs
+the private Render configuration below and a real-account verification. The remaining setup
+instructions document the initial process for recovery/reference, not permission to add another admin.
 Use an existing, confirmed Supabase Auth email/password user. This backend does not create
 accounts, send invitations, reset passwords or change Supabase signup/email settings.
 Find the user UUID under the project → Authentication → Users. A Supabase Dashboard login
