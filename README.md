@@ -11,7 +11,7 @@ review links. Production completion remains disabled; real media/account verific
 Step 20 connects those services through retention to human review. Owner resumed Steps 21–22:
 team access and version-bound approval. Real sign-in remains inactive until a team administrator
 is provisioned/configured; simulated approval cannot publish content.
-Latest application source deployed to the existing Render Free service: `f80eb96`.
+Latest application source deployed to the existing Render Free service: `f253012`.
 Scheduling and processing remain disabled; GitHub Actions supports manual tests only.
 No generation, publishing, advertising, or paid provider integration is enabled.
 Current owner decision: continue with mocks only and no additional spending. Real LLM API

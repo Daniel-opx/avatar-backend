@@ -82,3 +82,5 @@ and real-account prerequisites. Live human review of actual media remains unveri
 The CLI-generated approval migration is `supabase/migrations/20261109053341_video_approvals.sql`,
 applied once through the Supabase connector and aligned to that hosted ledger version.
 Full regression: 151 passed; final focused checks: 12 passed; simulated approval demo passed.
+Application source `f253012` deployed on the existing Render Free service. Live unauthenticated
+approval/inbox requests returned 401; no actual reviewer, decision or notification was created.

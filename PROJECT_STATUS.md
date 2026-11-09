@@ -9,14 +9,14 @@ Original Hebrew architecture document: not found in the repository; requirements
 Owner resumed development for Step 16 on 2026-11-08 after the Step 15 pause.
 Owner subsequently authorized **mock-only continuation with no additional spending**.
 Owner resumed development on 2026-11-09 and requested two milestones at a time, in roadmap
-order. Current work is Steps 21–22: team access and exact-version human approval.
+order. Steps 21–22 backend implementation is tested/deployed: team access and exact-version approval.
 This supersedes the Step 20 feature pause; mock-only/no-additional-spending restrictions remain.
 Real LLM API account/model/credentials/budget and HeyGen API video credits/rendering budget
 remain outstanding. The ChatGPT membership and HeyGen free web plan are not treated as
 funded backend API access. See [MOCK_DEVELOPMENT.md](docs/MOCK_DEVELOPMENT.md) for the policy
 and repeatable local walkthrough. No real provider activation or plan upgrade is authorized.
 Step 16 code and database tests passed; AI provider remains undecided and live verification is pending.
-Latest application deployment: `f80eb96` on the existing Render Free service; subsequent
+Latest application deployment: `f253012` on the existing Render Free service; subsequent
 commits update documentation only and do not require redeploying the application.
 Last verified database state: 4 jobs, scheduling=false, processing=false, 0 queued jobs,
 content_enabled=false, assets_enabled=false, render_enabled=false, completion_enabled=false, provider/model unset,
@@ -80,6 +80,17 @@ INFO only (private RLS/no-policy, 3 older unindexed FKs and unused indexes); no 
 Local owner-key job listing and disabled processing returned 200; team login 503 inactive,
 unauthenticated/team-administration requests 401, and shared-key human approval attempts 401.
 The actual backend role can read the managed Auth metadata needed for session/enrollment checks.
+Implementation `f253012` deployed manually to the existing Render Free service as
+`dep-dbolpis9v7es73fluri0` on 2026-11-09 at 07:40 Asia/Jerusalem (live at 07:41).
+Live health/readiness returned 200; auth login 503 inactive; anonymous identity, team inbox,
+membership, approval and internal-processing requests returned 401. New public-schema
+helper functions deny anon/authenticated execution. Post-deployment counts remain 4 jobs
+and zero real team members/sessions/approval requests/decisions/notifications.
+Deployment screenshot: `steps21-22-render-live.png` in the session visualization directory.
+Real sign-in remains pending first-administrator identity and private configuration; actual
+human/video acceptance remains pending. No outbound messages, paid call, generation activation,
+publishing or advertising occurred. Follow-up report commit changes documentation only.
+Steps 23–24 have not started. Existing `test.js` modification remains untouched and unstaged.
 
 ## Step 20 implementation and evidence
 
@@ -518,6 +529,6 @@ Reviewed build/runtime logs showed safe structured messages, no visible credenti
 - Rate limiting is per process and resets after restart; Render uses a conservative shared cap.
   Heavy unauthenticated traffic can consume the shared budget; this is not a distributed WAF.
 - Current shared key is temporary; team identities are Step 21.
-- Latest deployed source `f80eb96`; unrelated preexisting `test.js` edit preserved unstaged.
+- Latest deployed source `f253012`; unrelated preexisting `test.js` edit preserved unstaged.
 - Step 16 has a hosted migration ledger entry; earlier DDL is untracked. Reconcile the baseline before using a general migration runner.
 - See `docs/DEPLOYMENT.md` for test commands, rotation sequence and migration recovery.

@@ -110,6 +110,9 @@ The CLI-generated team migration is `supabase/migrations/20261109053326_team_acc
 applied once through the Supabase connector and aligned to that hosted ledger version.
 Full regression: 151 passed. Final focused team/approval checks: 12 passed; updated mock
 demo passed. Account-backed authentication remains unverified and inactive.
+Application source `f253012` deployed on the existing Render Free service on 2026-11-09.
+Live health/readiness returned 200; team/account endpoints rejected anonymous requests with
+401 and sign-in returned 503 inactive. No real member or credential was configured.
 
 References checked 2026-11-09: [password sign-in](https://supabase.com/docs/reference/javascript/auth-signinwithpassword),
 [verified user lookup](https://supabase.com/docs/reference/javascript/auth-getuser),

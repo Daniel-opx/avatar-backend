@@ -17,10 +17,10 @@ return disabled until a separate implementation/authorization for real accounts.
 Step 20 reuses the existing manual processing trigger and schema; composed rendering now
 requires retained media before human review. No new configuration, provider key or migration.
 
-Status: reviewed application source `f80eb96` deployed on the existing Render Free service.
-Steps 19–20 mock callback/retention/review and shared workflow are implemented. Scheduling,
-processing, content, assets, rendering and completion remain disabled.
-Deployment `dep-dbodp0hsrm7s73bmc03g` succeeded on 2026-11-08 at 22:33 Asia/Jerusalem;
+Status: reviewed application source `f253012` deployed on the existing Render Free service.
+Steps 21–22 team/approval backend is implemented and mock-tested. Scheduling, processing,
+content, assets, rendering, completion and real team sign-in remain disabled.
+Deployment `dep-dbolpis9v7es73fluri0` succeeded on 2026-11-09 at 07:40 Asia/Jerusalem;
 live health/readiness returned
 200. Authenticated processing was checked locally against the live database (200 disabled);
 the production owner-authenticated processing route has not been separately exercised.
@@ -41,6 +41,12 @@ migration or endpoint. Local owner-authenticated manual processing returned disa
 deployed anonymous manual processing returned 401. Broader roadmap expansion is deferred
 until an approved real script-to-video trial; production flags remain off. Owner subsequently
 resumed Steps 21–22 on 2026-11-09; their evidence is recorded in PROJECT_STATUS.md.
+Steps 21–22 regression: 151 passed; final focused checks: 12 passed; simulated approval/logout
+demo passed. Live anonymous team/approval/internal requests return 401; `/auth/login` returns
+503 inactive. No first administrator or actual login is configured. New helper functions and
+tables deny public/client access. There are still 4 jobs, zero team/approval rows and no
+provider calls. Existing owner-key compatibility was verified locally, without retrieving
+Render's rotated key. No upgrade, external message or publication was performed.
 Live at https://avatar-backend-65ep.onrender.com. Unattended automation is NOT authorized.
 HTTPS health/readiness passed; missing/old keys rejected. Owner-run fresh-key `GET /jobs`
 returned 200 on 2026-11-06. Build/start/health settings aligned; rebuild and restart recovery passed.
