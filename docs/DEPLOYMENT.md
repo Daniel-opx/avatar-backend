@@ -23,10 +23,10 @@ return disabled until a separate implementation/authorization for real accounts.
 Step 20 reuses the existing manual processing trigger and schema; composed rendering now
 requires retained media before human review. No new configuration, provider key or migration.
 
-Status: reviewed application source `f253012` deployed on the existing Render Free service.
-Steps 21–22 team/approval backend is implemented and mock-tested. Scheduling, processing,
+Status: reviewed application source `7021c2c` deployed on the existing Render Free service.
+Steps 21–24 team/approval/dashboard/mock publishing are implemented and mock-tested. Scheduling, processing,
 content, assets, rendering, completion and real team sign-in remain disabled.
-Deployment `dep-dbolpis9v7es73fluri0` succeeded on 2026-11-09 at 07:40 Asia/Jerusalem;
+Deployment `dep-dboo96qjnfac73fhn7b0` succeeded on 2026-11-09 at 10:30 Asia/Jerusalem;
 live health/readiness returned
 200. Authenticated processing was checked locally against the live database (200 disabled);
 the production owner-authenticated processing route has not been separately exercised.
@@ -63,6 +63,16 @@ New scheduler-scoped credential is live-verified through GitHub. A controlled 16
 test returned disabled/200 in 13.9 seconds on the first attempt; internal platform spin-down
 state was not independently inspected. Repeated requests left job counts and disabled scheduling unchanged.
 See `PROJECT_STATUS.md` for the evidence and remaining acceptance work.
+
+Steps 23–24 verification: full database-enabled suite 161 passed with zero failures/skips;
+extended mock demo passed through approval and duplicate-safe simulated publishing. Disposable
+schemas were removed. Migration `20261109082635_mock_social_publishing.sql` matches the hosted
+ledger; its three tables have RLS and deny client reads. Publishing is disabled, allowance zero,
+accounts/requests zero. Live dashboard/JS/CSS return 200, private team/account APIs 401,
+Auth login 503 inactive, root 302. `/dashboard/` serves a login shell without exposing team data.
+Local owner-key compatibility GET /jobs returned 200. Real user login/publishing are unverified.
+The Auth advisor reports leaked-password protection disabled; tracked in the sign-in review,
+with no account settings or paid features changed. Existing performance INFO findings remain.
 
 ## Configuration
 

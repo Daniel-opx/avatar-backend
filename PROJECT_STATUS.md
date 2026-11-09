@@ -16,7 +16,7 @@ remain outstanding. The ChatGPT membership and HeyGen free web plan are not trea
 funded backend API access. See [MOCK_DEVELOPMENT.md](docs/MOCK_DEVELOPMENT.md) for the policy
 and repeatable local walkthrough. No real provider activation or plan upgrade is authorized.
 Step 16 code and database tests passed; AI provider remains undecided and live verification is pending.
-Latest application deployment: `f253012` on the existing Render Free service; subsequent
+Latest application deployment: `7021c2c` on the existing Render Free service; subsequent
 commits update documentation only and do not require redeploying the application.
 Last verified database state: 4 jobs, scheduling=false, processing=false, 0 queued jobs,
 content_enabled=false, assets_enabled=false, render_enabled=false, completion_enabled=false, provider/model unset,
@@ -41,7 +41,7 @@ it is not part of the reviewed/deployed application commits.
 - [ ] Step 20: small mock workflow connected/tested through retained-media review; live acceptance pending.
 - [ ] Step 21: managed identity adapter, private sessions/roles and separate internal authentication implemented; live user acceptance pending.
 - [ ] Step 22: version-bound mock approvals, inbox notifications and replacement generation implemented/tested; actual-video/human acceptance pending.
-- [ ] Step 23: Hebrew/RTL dashboard implemented; verification/deployment in progress, real sign-in inactive pending review.
+- [ ] Step 23: Hebrew/RTL dashboard implemented, mock-tested and deployed; real sign-in/user acceptance inactive pending review.
 - [ ] Step 24: documented GHL v3 mock adapter/journal implemented; real account/permissions/media/publication acceptance pending.
 - [ ] Step 25: approval-gated Meta advertising and budgets.
 - [ ] Step 26: source-backed performance metrics.
@@ -81,6 +81,15 @@ allowance; no fixture schemas remain. All three new tables have RLS and deny cli
 Advisors: 32 intentional private-table RLS/no-policy INFO findings, three existing unindexed
 foreign keys and unused-index INFO findings. Auth leaked-password protection is disabled;
 recorded for sign-in review without changing account settings or enabling a paid feature.
+Application `7021c2c` deployed manually to the existing Render Free service as
+`dep-dboo96qjnfac73fhn7b0`, Deploy succeeded | Live, 2026-11-09 at 10:30 Asia/Jerusalem.
+Live checks: health/readiness/dashboard/JS/CSS 200, root redirect 302, anonymous dashboard/
+publishing-account/Auth-me APIs 401, Auth-login 503 inactive. Local owner-key GET /jobs remained
+200 without printing its value or business rows. Actual team login remains unverified.
+Deployment evidence: `step23-24-render-live.png`; local mock UI evidence:
+`step23-dashboard-overview.png` and `step23-dashboard-mock.png` in the session visualization directory.
+No paid resource, recurring trigger, real provider or publication was activated. Code and
+documentation are pushed; only the unrelated preexisting `test.js` modification remains local.
 
 ## Steps 21–22 implementation and evidence
 
@@ -570,6 +579,6 @@ Reviewed build/runtime logs showed safe structured messages, no visible credenti
 - Rate limiting is per process and resets after restart; Render uses a conservative shared cap.
   Heavy unauthenticated traffic can consume the shared budget; this is not a distributed WAF.
 - Current shared key is temporary; team identities are Step 21.
-- Latest deployed source `f253012`; unrelated preexisting `test.js` edit preserved unstaged.
+- Latest deployed source `7021c2c`; unrelated preexisting `test.js` edit preserved unstaged.
 - Step 16 has a hosted migration ledger entry; earlier DDL is untracked. Reconcile the baseline before using a general migration runner.
 - See `docs/DEPLOYMENT.md` for test commands, rotation sequence and migration recovery.
