@@ -96,7 +96,9 @@ an administrator cookie and CSRF header. Adding someone is an explicit access-gr
 
 Human controls: `POST /team/processing/run`, `POST /team/jobs/:id/retry`,
 `POST /team/jobs/:id/cancel`, `GET /team/jobs/:id/history`. Administrative endpoints are
-`GET /team/members` and `GET /team/audit`. Dashboard/login UI is Step 23, not implemented here.
+`GET /team/members` and `GET /team/audit`. Step 23 now supplies the Hebrew/RTL dashboard
+and login UI; see [DASHBOARD.md](DASHBOARD.md). Real sign-in remains inactive. Proposed
+Render settings are prepared, not applied: [AUTH_ACTIVATION_REVIEW.md](AUTH_ACTIVATION_REVIEW.md).
 
 ## Verification
 

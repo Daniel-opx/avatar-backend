@@ -9,7 +9,7 @@ Original Hebrew architecture document: not found in the repository; requirements
 Owner resumed development for Step 16 on 2026-11-08 after the Step 15 pause.
 Owner subsequently authorized **mock-only continuation with no additional spending**.
 Owner resumed development on 2026-11-09 and requested two milestones at a time, in roadmap
-order. Steps 21–22 backend implementation is tested/deployed: team access and exact-version approval.
+order. Current work: Steps 23–24, team dashboard and approval-gated mock GHL publishing.
 This supersedes the Step 20 feature pause; mock-only/no-additional-spending restrictions remain.
 Real LLM API account/model/credentials/budget and HeyGen API video credits/rendering budget
 remain outstanding. The ChatGPT membership and HeyGen free web plan are not treated as
@@ -23,7 +23,7 @@ content_enabled=false, assets_enabled=false, render_enabled=false, completion_en
 max_requests=0, max_submissions=0, submissions_used=0, zero content/render calls and generated
 versions/assets/manifests/requests, no leftover test/demo schemas. GitHub workflow remains manual-only. No paid provider
 calls, automatic publication, advertising or unattended processing were enabled.
-Last complete regression suite: 151 passed, zero failures/skips (Steps 21–22).
+Last complete regression suite: 161 passed, zero failures/skips (Steps 23–24).
 The preexisting local `test.js` modification is intentionally left uncommitted and unchanged;
 it is not part of the reviewed/deployed application commits.
 
@@ -41,14 +41,46 @@ it is not part of the reviewed/deployed application commits.
 - [ ] Step 20: small mock workflow connected/tested through retained-media review; live acceptance pending.
 - [ ] Step 21: managed identity adapter, private sessions/roles and separate internal authentication implemented; live user acceptance pending.
 - [ ] Step 22: version-bound mock approvals, inbox notifications and replacement generation implemented/tested; actual-video/human acceptance pending.
-- [ ] Step 23: authenticated team dashboard with Hebrew/RTL support.
-- [ ] Step 24: approval-gated GHL organic publishing.
+- [ ] Step 23: Hebrew/RTL dashboard implemented; verification/deployment in progress, real sign-in inactive pending review.
+- [ ] Step 24: documented GHL v3 mock adapter/journal implemented; real account/permissions/media/publication acceptance pending.
 - [ ] Step 25: approval-gated Meta advertising and budgets.
 - [ ] Step 26: source-backed performance metrics.
 - [ ] Step 27: evidence-backed recommendations with separate approvals.
 - [ ] Step 28: durable audit, monitoring and alerts.
 - [ ] Step 29: full acceptance/security testing and authorized live demonstration.
 - [ ] Step 30: operational documentation and separately approved gradual launch.
+
+## Steps 23–24 implementation and evidence
+
+Added a same-origin, framework-free RTL dashboard for login, job creation/filtering, text,
+history, review, notifications and scheduling. Admin-only schedule edits use version checks;
+activation stays locked. No server keys or provider credentials enter the browser. Prepared
+[Auth settings for review](docs/AUTH_ACTIVATION_REVIEW.md) without applying/activating them.
+
+Verified current official GHL v3 docs and added an injected mock-only Facebook-video adapter
+with a durable per-approval/account journal. Current approval is checked before reservation;
+concurrent retries cannot duplicate posts, uncertain writes stop and known-ID reads are bounded.
+Production has no live provider/token. Mock IDs never populate real GHL fields or job status.
+See [DASHBOARD.md](docs/DASHBOARD.md) and [GHL_PUBLISHING.md](docs/GHL_PUBLISHING.md).
+
+Initial focused checks: 12 passed, including existing security checks. Browser preview verified
+simulated login, RTL workspace, text/review, mock submission and logout. It used only generated
+data/identities; its exact schema was verified and removed after the preview process stdin
+closed. No real user/password, decision, provider call or social post was used. Publishing
+proof screenshot is from the local mock preview. Full database-enabled regression: 161 passed,
+zero failures/skips, including overlapping publication, stale approval, uncertain submission,
+lost reservation acknowledgement, scheduled replay and read-only reconciliation cases.
+The extended five-stage mock demo also passed: one simulated GHL create despite replay,
+zero real posts/provider calls, unchanged production configuration and disposable-schema cleanup.
+Migration `20261109082635_mock_social_publishing.sql` is applied and matches the hosted ledger.
+Final browser check verified the inline review acknowledgement, persisted simulated approval
+and logout. Both preview sessions used disposable mock identities and data only.
+Post-migration verification: 4 jobs, 1 enabled member, zero sessions/approvals/provider calls/
+publishing requests/accounts; all six automation flags false, publishing disabled with zero
+allowance; no fixture schemas remain. All three new tables have RLS and deny client reads.
+Advisors: 32 intentional private-table RLS/no-policy INFO findings, three existing unindexed
+foreign keys and unused-index INFO findings. Auth leaked-password protection is disabled;
+recorded for sign-in review without changing account settings or enabling a paid feature.
 
 ## Steps 21–22 implementation and evidence
 
@@ -91,7 +123,8 @@ Deployment screenshot: `steps21-22-render-live.png` in the session visualization
 Real sign-in remains pending private configuration; the first administrator is now registered. Actual
 human/video acceptance remains pending. No outbound messages, paid call, generation activation,
 publishing or advertising occurred. Follow-up report commit changes documentation only.
-Steps 23–24 have not started. Existing `test.js` modification remains untouched and unstaged.
+Steps 23–24 followed this milestone; see their evidence above. Existing `test.js` modification
+remains untouched and unstaged.
 
 First administrator setup — 2026-11-09: owner supplied a Supabase Auth user UUID. Verified
 the user exists and email is confirmed, then atomically registered it as the first enabled

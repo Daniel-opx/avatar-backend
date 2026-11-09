@@ -1,5 +1,6 @@
 const express = require("express");
-const pool = require("../db/pool");
+function createJobsRouter(pool=require('../db/pool'),{schema='public'}={}){
+if(!/^[a-z][a-z0-9_]*$/.test(schema))throw new Error('Invalid schema');
 const router = express.Router();
 
 router.post("/", async (req, res) => {
@@ -10,7 +11,7 @@ router.post("/", async (req, res) => {
 
   try {
     const result = await pool.query(
-      "INSERT INTO jobs (topic) VALUES ($1) RETURNING *",
+      `INSERT INTO ${schema}.jobs (topic) VALUES ($1) RETURNING *`,
       [topic.trim()]
     );
     return res.status(201).json(result.rows[0]);
@@ -23,7 +24,7 @@ router.post("/", async (req, res) => {
 router.get("/", async (req, res) => {
   try {
     const result = await pool.query(
-      "SELECT * FROM jobs ORDER BY created_at DESC LIMIT 100"
+      `SELECT * FROM ${schema}.jobs ORDER BY created_at DESC LIMIT 100`
     );
     return res.json(result.rows);
   } catch (error) {
@@ -32,4 +33,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-module.exports = router;
+return router;
+}
+module.exports = createJobsRouter();
+module.exports.createJobsRouter=createJobsRouter;

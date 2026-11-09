@@ -5,7 +5,8 @@ spending. This is the current execution policy until explicitly changed by the o
 Continue implementation and controlled testing in roadmap order; do not treat a pending
 live-account test as permission to enable a provider or as evidence that the integration works.
 Updated scope on 2026-11-09: owner resumed roadmap work in two-step batches, starting with
-Steps 21–22. The earlier Step 20 feature pause is superseded. No provider spending, real
+Steps 21–22, followed by Steps 23–24 (dashboard and simulated GHL publishing). The earlier
+Step 20 feature pause is superseded. No provider spending, real
 generation, publication or advertising is authorized by this scope change.
 
 ## Outstanding live prerequisites

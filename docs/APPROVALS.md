@@ -1,7 +1,9 @@
 # Step 22 — exact-version review
 
 Provides a backend approval workflow for signed-in team members. The chosen notification
-channel is an **in-app inbox**, available by API polling until the Step 23 dashboard exists.
+channel is an **in-app inbox**, now also shown in the Step 23 dashboard.
+Step 24 adds only a simulated GHL journal; mock publication never changes actual job publication
+status or bypasses the database approval guard. See [GHL_PUBLISHING.md](GHL_PUBLISHING.md).
 No WhatsApp/email integration, account purchase, external notification or public post is sent.
 
 Current generation remains mock-only. Simulated decisions are recorded but never change a

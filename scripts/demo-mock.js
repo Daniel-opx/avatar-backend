@@ -14,6 +14,8 @@ const { createCompletionService } = require('../services/completion');
 const { createMockVideoStore } = require('../test-support/mock-video-store');
 const { createTeamService } = require('../services/team');
 const { createApprovalService } = require('../services/approvals');
+const { createPublishingService } = require('../services/publishing');
+const { createMockGhl } = require('../services/ghl-mock');
 
 async function main() {
   const schema = `mock_demo_${randomUUID().replaceAll('-', '')}`;
@@ -27,7 +29,7 @@ async function main() {
     // Structure only; no real topics, scripts, jobs or credentials are copied.
     await pool.query(`CREATE TABLE ${schema}.jobs (LIKE public.jobs INCLUDING ALL)`);
     await query('CREATE TABLE public.users(id uuid PRIMARY KEY); CREATE TABLE public.sessions(id uuid PRIMARY KEY,user_id uuid REFERENCES public.users(id),not_after timestamptz)');
-    for (const migration of ['20261106073647_durable_processing.sql', '20261108184837_versioned_content.sql', '20261108191748_asset_preparation.sql', '20261108193747_render_requests.sql', '20261108200903_webhook_media.sql', '20261109053326_team_access.sql', '20261109053341_video_approvals.sql']) {
+    for (const migration of ['20261106073647_durable_processing.sql', '20261108184837_versioned_content.sql', '20261108191748_asset_preparation.sql', '20261108193747_render_requests.sql', '20261108200903_webhook_media.sql', '20261109053326_team_access.sql', '20261109053341_video_approvals.sql', '20261109082635_mock_social_publishing.sql']) {
       await query(readFileSync(path.join(__dirname, '../supabase/migrations', migration), 'utf8'));
     }
     await query('UPDATE public.processing_config SET enabled=true');
@@ -103,10 +105,21 @@ async function main() {
       request_key:randomUUID(),action:'approved',expected_hash:request.snapshot_hash,comment:'Simulated review only; no real person approved this fixture.',
     });
     assert.equal(decision.state,'approved');assert.equal(decision.publication_authorized,false);
+    await query('UPDATE public.publishing_config SET enabled=true,max_submissions=1');
+    await query("INSERT INTO public.publishing_accounts(id,platform,label) VALUES('mock_demo_account','facebook','Mock demo only')");
+    let postCalls=0;
+    const publishing=createPublishingService(pool,team,{schema,allowMock:true,provider:createMockGhl({transport:{mode:'mock',async request(){
+      postCalls++;return new Response(JSON.stringify({success:true,results:{post:{_id:'mock_demo_post',locationId:'mock_location',status:'published',publishedAt:new Date().toISOString()}}}));
+    }}})});
+    const postBody={request_key:randomUUID(),approval_id:request.id,account_id:'mock_demo_account'};
+    const posted=await publishing.submit(await team.lookup(operatorLogin.token),jobId,postBody);
+    assert.equal(posted.state,'published');assert.equal(posted.real_post_created,false);
+    await publishing.submit(await team.lookup(operatorLogin.token),jobId,postBody);assert.equal(postCalls,1);
     await team.logout(reviewerLogin.token,reviewerLogin.csrf);assert.equal(await team.lookup(reviewerLogin.token),null);
     report = { mode: 'MOCK_ONLY', steps, mock_llm_calls: mockCalls,
       mock_team_sessions_verified:true,mock_reviewer_decision:decision.state,real_human_review:false,
       publication_authorized:false,logout_revocation_verified:true,
+      mock_ghl_post_state:posted.state,mock_ghl_submissions:postCalls,real_social_posts_created:0,
       mock_webhook_accepted:true,private_mock_media_retained:true,expiring_review_link_verified:true,
       review_fixture_bytes:review.bytes.length,playable_video:false,
       mock_render_submissions:mockSubmissions,persisted_mock_video_id:renderHistory.requests[0].external_video_id,

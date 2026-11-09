@@ -8,6 +8,11 @@ registered on 2026-11-09; private Render Auth configuration remains pending. No 
 messages are sent, and mock approval cannot publish. See [TEAM_ACCESS.md](TEAM_ACCESS.md)
 and [APPROVALS.md](APPROVALS.md) before real-account activation. The original owner key is
 still server-only; human decisions require individual team sessions.
+Steps 23–24 add a public login shell at `/dashboard/` and private dashboard APIs. All team
+data requires individual authentication; real login remains inactive. Prepared settings are
+in [AUTH_ACTIVATION_REVIEW.md](AUTH_ACTIVATION_REVIEW.md), awaiting review and activation.
+The new publishing tables default disabled with zero allowance and no accounts. No real GHL
+transport is installed. Dashboard schedule activation is locked independently of form values.
 Step 17 does not provision storage buckets or configure a real TTS adapter. Asset preparation
 remains disabled in the production pipeline; see [ASSETS.md](ASSETS.md).
 Step 18 similarly does not register a live HeyGen transport or accept real HeyGen credentials.

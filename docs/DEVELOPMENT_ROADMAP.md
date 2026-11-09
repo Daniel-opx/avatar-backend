@@ -6,7 +6,8 @@ access remain prerequisites for live acceptance. Keep those tests pending and la
 clearly; do not activate automation, upgrade plans or purchase credits. See
 [mock development policy](MOCK_DEVELOPMENT.md) and [current checklist](../PROJECT_STATUS.md).
 Scope update on 2026-11-09: owner resumed development in two-step batches, beginning with
-Steps 21–22. This supersedes the Step 20 feature pause. The no-additional-spending policy
+Steps 21–22, followed by Steps 23–24 (dashboard and mock GHL publishing). This supersedes
+the Step 20 feature pause. The no-additional-spending policy
 and separate approval gates for real accounts, publishing, advertising and activation remain.
 
 ## Your role
