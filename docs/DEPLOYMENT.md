@@ -1,5 +1,10 @@
 # Deployment and recovery
 
+Active execution plan: [PLATFORM_ROADMAP.md](PLATFORM_ROADMAP.md), adopted 2026-11-11.
+Step numbers in the deployment history below are legacy references. New work resumes at
+account readiness and the real-video milestones; deploying inactive legacy Meta features
+is not a prerequisite for them. The planning update itself requires no application deployment.
+
 Current spending policy: mock-only development. Do not enable provider flags, buy credits,
 upgrade HeyGen/Render, or activate automation. Real LLM API access and a HeyGen API video
 budget remain outstanding; see [MOCK_DEVELOPMENT.md](MOCK_DEVELOPMENT.md).

@@ -1,5 +1,11 @@
 # Mock-only development decision — 2026-11-08
 
+Planning update, 2026-11-11: [PLATFORM_ROADMAP.md](PLATFORM_ROADMAP.md) is now the active
+Step 0–12 plan. Historical step numbers below describe previous work. Complete actual video
+production before expanding downstream mocks; mock tests remain useful evidence but do not
+satisfy live acceptance. The new plan authorizes no paid calls or activation; the existing
+no-additional-spending restriction remains until explicitly changed by the owner.
+
 The owner authorized continued development using mocks, with no additional provider
 spending. This is the current execution policy until explicitly changed by the owner.
 Continue implementation and controlled testing in roadmap order; do not treat a pending

@@ -2,21 +2,24 @@
 
 Node.js/Express backend for the AI Avatar automation system, using Supabase PostgreSQL.
 
-Development resumed for Step 16 on 2026-11-08. Steps 1–15 are complete; Step 16's
-content-generation implementation passes database/mocked tests; the provider remains undecided.
-Step 17 asset preparation passes mock/database checks, with external voice disabled by default.
-Step 18 mock rendering has a tested durable submission/poll journal; live verification is deferred.
-Step 19 adds mock authenticated callbacks, deduplication, retained media metadata and expiring
-review links. Production completion remains disabled; real media/account verification is pending.
-Step 20 connects those services through retention to human review. Owner resumed Steps 21–22:
-team access and version-bound approval. The first real administrator is registered; sign-in
-remains inactive pending private Render Auth configuration. Simulated approval cannot publish content.
-Steps 23–24 add the Hebrew/RTL `/dashboard/` interface and a controlled mock GHL publication
-journal. Sign-in settings are prepared for review; real publishing remains disabled.
-Step 25 adds paused mock Meta campaign preparation with separate exact-budget/activation
-review, durable component IDs and conservative recovery. Actual advertising activation stays locked.
-Step 25 tests pass and its disabled schema is installed; application deployment is pending
-because the Render dashboard remained on Loading. Existing deployed source is unchanged.
+The owner adopted a new [outcome-based Step 0–12 roadmap](docs/PLATFORM_ROADMAP.md) on
+2026-11-11, based on the [original architecture](https://files.instinct.com/uol1rj37gm3r).
+The target is the full platform: real branded Hebrew videos, Cron/chat initiation, human review,
+GHL organic publishing and Meta-based recommendations/approved campaign operations.
+HeyGen renders; GHL owns the organic calendar; Meta owns advertising reporting. Our backend
+coordinates them rather than building competing platform products.
+
+Current position: **Step 0, account readiness and production choices**. Reuse the working
+backend/scheduler/durable processing foundation. Next delivery gates are an accepted real
+avatar/voice pilot and real content → sourced creative → template rendering → playable video.
+There is currently no Pexels/Pixabay integration, real Studio-template pipeline or verified
+real-video output. Existing content/render/storage/review/publishing services have mock/test
+evidence; inserting credentials alone will not make the mock-only services production-ready.
+
+The minimal RTL dashboard and disabled GHL/Meta mock modules are retained. Further dashboard,
+reporting-product and downstream mock expansion is deferred. The first administrator is
+registered, but real sign-in remains inactive. Legacy Step 25 source/schema are tested; source
+deployment remains pending after Render's management dashboard failed to load.
 Latest application source deployed to the existing Render Free service: `7021c2c`.
 Dashboard: https://avatar-backend-65ep.onrender.com/dashboard/ (real sign-in still inactive).
 Scheduling and processing remain disabled; GitHub Actions supports manual tests only.
@@ -25,7 +28,8 @@ Current owner decision: continue with mocks only and no additional spending. Rea
 access/budget and HeyGen API video credits/budget are still required before live automation.
 
 - [Project status and verification evidence](PROJECT_STATUS.md)
-- [Full development roadmap](docs/DEVELOPMENT_ROADMAP.md)
+- [Active platform roadmap — Steps 0–12](docs/PLATFORM_ROADMAP.md)
+- [Superseded development roadmap — historical reference](docs/DEVELOPMENT_ROADMAP.md)
 - [Deployment and recovery](docs/DEPLOYMENT.md)
 - [External scheduler](docs/EXTERNAL_CRON.md)
 - [Durable processing and test commands](docs/PROCESSING.md)

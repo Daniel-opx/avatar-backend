@@ -1,34 +1,73 @@
 # AI Avatar Automation — development status
 
 Updated: 2026-11-11 (Asia/Jerusalem).
-Authoritative roadmap: [DEVELOPMENT_ROADMAP.md](docs/DEVELOPMENT_ROADMAP.md).
-Original Hebrew architecture document: not found in the repository; requirements depending on it remain unresolved.
+Authoritative roadmap: [PLATFORM_ROADMAP.md](docs/PLATFORM_ROADMAP.md), adopted 2026-11-11.
+Product baseline: [ארכיטקטורה מלאה למערכת האווטר](https://files.instinct.com/uol1rj37gm3r),
+read in full on 2026-11-11. The earlier "original document not found" status is superseded.
+Previous Step 0–30 plan: [legacy reference](docs/DEVELOPMENT_ROADMAP.md), not the active execution order.
 
 ## Current handoff — 2026-11-11
 
-Owner resumed development for Step 16 on 2026-11-08 after the Step 15 pause.
-Owner subsequently authorized **mock-only continuation with no additional spending**.
-Owner resumed development on 2026-11-09 and requested two milestones at a time, in roadmap
-order. Steps 23–24 are deployed. Current work: Step 25, paused mock Meta campaign preparation.
-This supersedes the Step 20 feature pause; mock-only/no-additional-spending restrictions remain.
+The owner requested a new plan based on the original architecture and the code review.
+The outcome-based Step 0–12 roadmap is now active. The goal remains the complete platform;
+the first delivery gates are real avatar/voice quality and a real branded video, then Cron,
+human review, GHL Instagram publishing and Meta-based recommendations/approved campaign actions.
+Meta owns advertising measurement/reporting; GHL owns the organic calendar; our backend
+coordinates them. No separate analytics product is planned.
+
+**Current position: new Step 0 — prerequisites and production choices.** Planning is recorded;
+actual account capability, selected options and approved live-test allowance remain unresolved.
+Reuse the existing foundation. Do not resume legacy Step 26 or expand downstream mocks as
+the next task. This planning update changes no application code, database, environment,
+deployment or provider activation. Existing mock-only/no-additional-spending restrictions remain.
 Real LLM API account/model/credentials/budget and HeyGen API video credits/rendering budget
 remain outstanding. The ChatGPT membership and HeyGen free web plan are not treated as
 funded backend API access. See [MOCK_DEVELOPMENT.md](docs/MOCK_DEVELOPMENT.md) for the policy
 and repeatable local walkthrough. No real provider activation or plan upgrade is authorized.
-Step 16 code and database tests passed; AI provider remains undecided and live verification is pending.
+The LLM adapter/content code is implemented and mock-tested; selected-account live verification is pending.
 Latest verified application deployment: `7021c2c` on the existing Render Free service.
-Step 25 source is not deployed: Render's service and workspace dashboards remained on
-Loading after refresh/navigation. Its private schema migration is applied with disabled defaults.
+Legacy Step 25 source is not deployed: the last attempt found Render's service/workspace
+dashboards stuck on Loading. Its private schema is applied with disabled defaults. Deploying
+those inactive Meta features is not a prerequisite for the new real-video milestone.
 Last verified database state: 4 jobs, scheduling=false, processing=false, 0 queued jobs,
 content_enabled=false, assets_enabled=false, render_enabled=false, completion_enabled=false, provider/model unset,
 max_requests=0, max_submissions=0, submissions_used=0, zero content/render calls and generated
 versions/assets/manifests/requests, no leftover test/demo schemas. GitHub workflow remains manual-only. No paid provider
 calls, automatic publication, advertising or unattended processing were enabled.
-Last complete regression suite: 175 passed, zero failures/skips (Step 25).
+Last complete regression suite: 175 passed, zero failures/skips (legacy Step 25).
+These tests are historical verification evidence; they do not prove real video production.
 Preexisting local dashboard CSS, `test.js` and generated-folder changes are left untouched
 and excluded from this step's commits.
 
-## Checklist
+## Active Step 0–12 checklist
+
+Complete a phase only against its outcome in PLATFORM_ROADMAP.md. "Mock-tested" is not
+"live-verified" or "owner-accepted". The planning-only change did not run new application tests.
+
+| Step | Implementation / mock evidence | Live verification / acceptance |
+| --- | --- | --- |
+| 0 — Prerequisites and choices | New plan adopted; account/option inventory to finish | API capabilities, credits and test allowance unresolved |
+| 1 — Avatar/voice pilot | No real pilot implemented by this backend | Tomer's actual avatar, voice and Hebrew quality pending |
+| 2 — Cloud foundation | Existing HTTP/DB/scheduler, durable engine, recovery and access controls reused | Core deployment/auth/scheduler previously verified; recheck composed live adapters |
+| 3 — Topic/content | Structured Hebrew output and OpenAI adapter mock-tested; topic bank missing | Real generation/provider selection pending |
+| 4 — Creative sourcing | Asset metadata/validation and mock storage exist; no Pexels/Pixabay search/download | Actual material, provenance and permitted-use verification missing |
+| 5 — Template rendering | Single-avatar renderer mock-tested; no real Studio-template integration | Branded background composition, Hebrew captions and rendering pending |
+| 6 — Manual real-video workflow | Pipeline, callbacks, retention and review links mock-tested | No real saved/playable end-to-end video |
+| 7 — Commands/review | Minimal dashboard, roles, versioned approvals and inbox mock-tested | Real login/review, chosen chat adapter and explicit approval expiry pending |
+| 8 — Cron-driven production | Scheduler creation verified; processing remains separate/manual; external workflow manual-only | Cron-to-real-video progression and standing recurrence unverified/inactive |
+| 9 — GHL Instagram | Facebook-only publishing mock and journal exist | Actual GHL access, Instagram operation and approved post pending |
+| 10 — Meta results/recommendations | No Insights/recommendation implementation | Actual data, KPI/sample rules and review pending |
+| 11 — Meta actions/replacement | Paused component mocks and review journal exist; activation hard-locked | Real account/write access, daily aggregate caps and controlled replacement pending |
+| 12 — Complete operation/launch | Some logs/audits/recovery/runbooks exist | Full authorized demonstration, live acceptance and gradual launch pending |
+
+Immediate next work is Step 0 readiness, then the avatar pilot and missing real content,
+creative sourcing, template and storage integrations. No live call or spend is authorized by
+this checklist. Preserve existing disabled downstream modules/tables and unrelated local edits.
+
+## Legacy checklist — historical Step 1–30 numbering
+
+Retained for traceability only. All numbered implementation/evidence sections below use the
+legacy numbering; they do not set the next development task.
 
 - [x] Steps 1–11: existing backend and recurring scheduler; earlier live integration passed.
 - [x] Step 12: scheduler reliability/recovery — isolated PostgreSQL tests executed successfully.

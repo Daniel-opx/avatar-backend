@@ -1,3 +1,10 @@
+# Legacy roadmap — superseded 2026-11-11
+
+Historical reference only. The owner adopted [PLATFORM_ROADMAP.md](PLATFORM_ROADMAP.md)
+as the active outcome-based Step 0–12 plan after reviewing the original architecture.
+Step numbers and execution instructions below describe the previous plan; do not resume
+them as current instructions. Existing safety, spending and approval restrictions remain.
+
 # MASTER DEVELOPMENT INSTRUCTIONS — AI Avatar Automation System
 
 Execution update from owner, 2026-11-08: continue in **mock-only mode**, with no additional

@@ -64,7 +64,9 @@ Known-ID inspection is read-only: no sooner than the stored due time, at most th
 with bounded Retry-After backoff (30–3600 seconds). Errors are stored as sanitized codes;
 raw upstream messages and credentials are excluded. No automatic timers/Cron are added.
 Budget amounts and component operations/reviews are audited. `real_spend_minor: 0` describes
-the mock, not measured Meta Insights; actual cost collection belongs to Step 26.
+the mock, not measured Meta Insights; future actual cost evidence belongs to the Meta
+results integration in [new Step 10](PLATFORM_ROADMAP.md). This document's Step 25 title
+uses legacy numbering and does not set the current execution order.
 
 ## Private API
 
