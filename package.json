@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "demo:mock": "node scripts/demo-mock.js",
-    "test": "node --test --test-concurrency=1 scheduler.test.js scheduler.integration.test.js security.test.js scheduler-auth.test.js trigger-scheduler.test.js processing.test.js processing.integration.test.js content.test.js content.integration.test.js assets.test.js assets.integration.test.js rendering.test.js rendering.integration.test.js completion.test.js completion.integration.test.js pipeline.integration.test.js team.test.js team-approvals.integration.test.js ghl.test.js dashboard-publishing.integration.test.js",
+    "test": "node --test --test-concurrency=1 scheduler.test.js scheduler.integration.test.js security.test.js scheduler-auth.test.js trigger-scheduler.test.js processing.test.js processing.integration.test.js content.test.js content.integration.test.js assets.test.js assets.integration.test.js rendering.test.js rendering.integration.test.js completion.test.js completion.integration.test.js pipeline.integration.test.js team.test.js team-approvals.integration.test.js ghl.test.js dashboard-publishing.integration.test.js meta.test.js meta.integration.test.js",
+    "test:meta:db": "node --test --test-concurrency=1 meta.test.js meta.integration.test.js",
     "preview:dashboard": "node scripts/preview-dashboard.js",
     "test:dashboard:db": "node --test dashboard-publishing.integration.test.js",
     "test:team-approvals:db": "node --test team-approvals.integration.test.js",

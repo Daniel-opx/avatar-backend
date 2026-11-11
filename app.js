@@ -5,7 +5,7 @@ const { randomUUID } = require('node:crypto');
 const internalRouter = require('./routes/internal');
 const apiKeyAuth = require('./middleware/apiKeyAuth');
 
-function createApp({ pool = require('./db/pool'), logger = console.log, rateLimitMax = 120, render = Boolean(process.env.RENDER), completion, team, approvals, dashboard, publishing, pipeline, jobs } = {}) {
+function createApp({ pool = require('./db/pool'), logger = console.log, rateLimitMax = 120, render = Boolean(process.env.RENDER), completion, team, approvals, dashboard, publishing, meta, pipeline, jobs } = {}) {
   const app = express();
   app.disable('x-powered-by');
   app.set('trust proxy', render ? 1 : false);
@@ -38,8 +38,10 @@ function createApp({ pool = require('./db/pool'), logger = console.log, rateLimi
   const teamRoutes = require('./routes/team');
   dashboard ||= require('./services/dashboard').createDashboardService(pool,team);
   publishing ||= require('./services/publishing').createPublishingService(pool,team);
+  meta ||= require('./services/meta').createMetaService(pool,team);
   app.use('/auth',json,teamRoutes.authRouter(team,auth));
   app.use('/team',json,require('./routes/dashboard')(auth,dashboard,publishing));
+  app.use('/team',json,require('./routes/meta')(auth,meta));
   app.use('/team',json,teamRoutes.teamRouter(team,auth,approvals,pipeline.processing));
   app.use('/webhooks', callbacks.webhookRouter(completion));
   app.use('/review', callbacks.reviewRouter(completion));

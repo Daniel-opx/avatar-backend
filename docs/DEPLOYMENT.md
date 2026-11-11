@@ -13,6 +13,14 @@ data requires individual authentication; real login remains inactive. Prepared s
 in [AUTH_ACTIVATION_REVIEW.md](AUTH_ACTIVATION_REVIEW.md), awaiting review and activation.
 The new publishing tables default disabled with zero allowance and no accounts. No real GHL
 transport is installed. Dashboard schedule activation is locked independently of form values.
+Step 25 adds private API-only mock Meta campaign preparation. Its default service has no
+provider registered; `meta_config` defaults disabled with zero draft/budget allowance. Even
+approved mock activation reviews cannot activate advertising. No Meta secret or paid account
+configuration is needed. See [META_ADVERTISING.md](META_ADVERTISING.md) before live work.
+Step 25 source is not deployed as of 2026-11-11: service/workspace pages stayed on Loading
+after refresh/navigation, without exposing deployment controls. No deploy was triggered.
+The disabled migration is installed; source deployment must be retried when dashboard access
+recovers. This observation does not establish a provider-wide outage.
 Step 17 does not provision storage buckets or configure a real TTS adapter. Asset preparation
 remains disabled in the production pipeline; see [ASSETS.md](ASSETS.md).
 Step 18 similarly does not register a live HeyGen transport or accept real HeyGen credentials.

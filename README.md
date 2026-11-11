@@ -13,6 +13,10 @@ team access and version-bound approval. The first real administrator is register
 remains inactive pending private Render Auth configuration. Simulated approval cannot publish content.
 Steps 23–24 add the Hebrew/RTL `/dashboard/` interface and a controlled mock GHL publication
 journal. Sign-in settings are prepared for review; real publishing remains disabled.
+Step 25 adds paused mock Meta campaign preparation with separate exact-budget/activation
+review, durable component IDs and conservative recovery. Actual advertising activation stays locked.
+Step 25 tests pass and its disabled schema is installed; application deployment is pending
+because the Render dashboard remained on Loading. Existing deployed source is unchanged.
 Latest application source deployed to the existing Render Free service: `7021c2c`.
 Dashboard: https://avatar-backend-65ep.onrender.com/dashboard/ (real sign-in still inactive).
 Scheduling and processing remain disabled; GitHub Actions supports manual tests only.
@@ -35,10 +39,11 @@ access/budget and HeyGen API video credits/budget are still required before live
 - [Exact-version approvals, replacement videos and inbox notifications](docs/APPROVALS.md)
 - [Team dashboard and local preview](docs/DASHBOARD.md)
 - [Mock GHL publishing contract and live prerequisites](docs/GHL_PUBLISHING.md)
+- [Mock Meta campaigns, budget reviews and activation lock](docs/META_ADVERTISING.md)
 - [Prepared sign-in settings — not activated](docs/AUTH_ACTIVATION_REVIEW.md)
 
 Run locally with `npm ci` then `npm start`. Configure credentials privately in `.env`;
 see the deployment guide. Run `npm test` for local checks; opt-in PostgreSQL test
 instructions are in the processing/content/asset/rendering/completion/pipeline guides.
-Full regression: 161 passed, zero failures/skips.
+Full regression: 175 passed, zero failures/skips.
 Run `npm run demo:mock` for a disposable simulated walkthrough; no real video is generated.

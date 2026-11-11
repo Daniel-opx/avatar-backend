@@ -1,31 +1,32 @@
 # AI Avatar Automation — development status
 
-Updated: 2026-11-09 (Asia/Jerusalem).
+Updated: 2026-11-11 (Asia/Jerusalem).
 Authoritative roadmap: [DEVELOPMENT_ROADMAP.md](docs/DEVELOPMENT_ROADMAP.md).
 Original Hebrew architecture document: not found in the repository; requirements depending on it remain unresolved.
 
-## Current handoff — 2026-11-09
+## Current handoff — 2026-11-11
 
 Owner resumed development for Step 16 on 2026-11-08 after the Step 15 pause.
 Owner subsequently authorized **mock-only continuation with no additional spending**.
 Owner resumed development on 2026-11-09 and requested two milestones at a time, in roadmap
-order. Current work: Steps 23–24, team dashboard and approval-gated mock GHL publishing.
+order. Steps 23–24 are deployed. Current work: Step 25, paused mock Meta campaign preparation.
 This supersedes the Step 20 feature pause; mock-only/no-additional-spending restrictions remain.
 Real LLM API account/model/credentials/budget and HeyGen API video credits/rendering budget
 remain outstanding. The ChatGPT membership and HeyGen free web plan are not treated as
 funded backend API access. See [MOCK_DEVELOPMENT.md](docs/MOCK_DEVELOPMENT.md) for the policy
 and repeatable local walkthrough. No real provider activation or plan upgrade is authorized.
 Step 16 code and database tests passed; AI provider remains undecided and live verification is pending.
-Latest application deployment: `7021c2c` on the existing Render Free service; subsequent
-commits update documentation only and do not require redeploying the application.
+Latest verified application deployment: `7021c2c` on the existing Render Free service.
+Step 25 source is not deployed: Render's service and workspace dashboards remained on
+Loading after refresh/navigation. Its private schema migration is applied with disabled defaults.
 Last verified database state: 4 jobs, scheduling=false, processing=false, 0 queued jobs,
 content_enabled=false, assets_enabled=false, render_enabled=false, completion_enabled=false, provider/model unset,
 max_requests=0, max_submissions=0, submissions_used=0, zero content/render calls and generated
 versions/assets/manifests/requests, no leftover test/demo schemas. GitHub workflow remains manual-only. No paid provider
 calls, automatic publication, advertising or unattended processing were enabled.
-Last complete regression suite: 161 passed, zero failures/skips (Steps 23–24).
-The preexisting local `test.js` modification is intentionally left uncommitted and unchanged;
-it is not part of the reviewed/deployed application commits.
+Last complete regression suite: 175 passed, zero failures/skips (Step 25).
+Preexisting local dashboard CSS, `test.js` and generated-folder changes are left untouched
+and excluded from this step's commits.
 
 ## Checklist
 
@@ -43,12 +44,51 @@ it is not part of the reviewed/deployed application commits.
 - [ ] Step 22: version-bound mock approvals, inbox notifications and replacement generation implemented/tested; actual-video/human acceptance pending.
 - [ ] Step 23: Hebrew/RTL dashboard implemented, mock-tested and deployed; real sign-in/user acceptance inactive pending review.
 - [ ] Step 24: documented GHL v3 mock adapter/journal implemented; real account/permissions/media/publication acceptance pending.
-- [ ] Step 25: approval-gated Meta advertising and budgets.
+- [ ] Step 25: paused mock Meta campaigns, exact-budget/activation review implemented and mock-tested; Render deployment and live account/activation acceptance pending.
 - [ ] Step 26: source-backed performance metrics.
 - [ ] Step 27: evidence-backed recommendations with separate approvals.
 - [ ] Step 28: durable audit, monitoring and alerts.
 - [ ] Step 29: full acceptance/security testing and authorized live demonstration.
 - [ ] Step 30: operational documentation and separately approved gradual launch.
+
+## Step 25 implementation and evidence
+
+Owner requested the next step on 2026-11-11. Added only mock paused Meta campaign preparation,
+not Step 26 analytics. Current official Meta SDK source confirms versioned Graph edges and
+campaign/ad-set/creative/ad structures. Several Meta documentation pages returned 429 or
+were unavailable; actual permissions, account setup and payload acceptance remain unverified.
+See [META_ADVERTISING.md](docs/META_ADVERTISING.md) for sources and precise scope.
+
+The immutable draft binds approved content, targeting, schedule and integer ILS lifetime
+budget. An admin must separately review its exact budget hash; operators cannot grant it.
+Activation review is a separate mock record, and actual activation remains hard-locked even
+after both reviews. New settings default disabled with zero allowance; no live adapter,
+credential, campaign, budget increase or spend is installed/authorized.
+
+Four private tables store configuration, drafts, decisions and per-stage operations. Row locks,
+unique constraints and commit-before-I/O reservation prevent duplicate stage writes. Unknown
+creation results quarantine without retry. Known-ID reads have persisted backoff and a
+three-check limit. API-only addition uses existing team roles/CSRF, without changing dashboard UI.
+
+Focused verification: 13 test records passed with isolated PostgreSQL and mock Meta. All
+14 final Meta test records, including lost-commit-acknowledgement and successful status-read
+cases, passed within the full regression run: 175 passed, zero failures/skips (684 seconds).
+Migration `20261111125826_mock_meta_campaigns.sql` is applied and matches the hosted ledger.
+The initial concurrency assertion was corrected to permit legitimate
+progress through distinct stages while requiring exactly one call for each stage.
+Preexisting dashboard CSS, test.js and generated folders are excluded from this work.
+Post-migration check: 4 production jobs; zero Meta drafts, decisions and operations; all eight
+scheduling/generation/publishing/Meta flags false; zero test schemas remain. Four new tables
+have RLS and deny client reads. Advisors report no new unindexed foreign keys (three existing
+INFO findings), 36 intentional private-table RLS/no-policy INFO findings, unused-index INFO,
+and the existing leaked-password-protection warning tracked in the sign-in review.
+Local wiring: owner-key GET /jobs 200, anonymous Meta detail 401, login 503 inactive. No secret
+or business row was printed. Source/docs are committed and pushed; deployment remains pending
+because Render's dashboard never exposed deploy controls. No deploy was triggered. Screenshot:
+`step25-render-loading.png` in the session visualization directory. This is an observed browser
+loading failure, not evidence of a Render-wide outage. Existing deployed health/readiness/
+dashboard returned HTTP 200 after the blocked deployment check. No Step 25 live deployment
+or provider-account acceptance is claimed.
 
 ## Steps 23–24 implementation and evidence
 

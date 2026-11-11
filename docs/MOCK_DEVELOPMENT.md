@@ -8,6 +8,8 @@ Updated scope on 2026-11-09: owner resumed roadmap work in two-step batches, sta
 Steps 21–22, followed by Steps 23–24 (dashboard and simulated GHL publishing). The earlier
 Step 20 feature pause is superseded. No provider spending, real
 generation, publication or advertising is authorized by this scope change.
+On 2026-11-11 the owner requested the next step: Step 25. It adds only paused Meta mocks,
+synthetic budget reviews and durable operation records. No real campaign or spending is authorized.
 
 ## Outstanding live prerequisites
 
